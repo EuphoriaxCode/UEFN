@@ -340,3 +340,12 @@ C04 AddCamera succeeded; holding for 12 s  ...  camera released
   `MakeRotationDegrees(Up, ±90) * DeviceRotation` (right-handed: +90 about Up takes Forward to Left) — the device picks the
   sign by checking `GetForwardAxis()` against `−GetLeftAxis()`. Verified in game: screen aimed at spawn → board front visible.
 - Rotation composition: `operator'*'(PreRotation, PostRotation)`; local turn first, then the device rotation.
+
+### E32 ✅ Proximity behaviour verified; No Mount height; server Print timing (Boo Board v1.1.4)
+- Near/far test (test device teleports the player 6 m in front, then 35 m away after 5 s): the No Mount board finished the
+  running show and stayed closed for the next ~27 s while the loop-mode boards kept playing — the "keeps playing" report
+  was the 20 m default range + the show finishing. Default Trigger Distance is now 10 m.
+- No Mount used the device as the board's TOP edge → a ground-placed device put the open board underground. Now the
+  device is the ground point for every mount (No Mount: open bottom edge 20 cm above it).
+- ⚠️ Server-side Verse `Print` lines can reach the editor log **late and batched** (old session lines showed up hours
+  later with one timestamp). Don't time things from the editor log; use client captures (HUD prints) instead.

@@ -37,13 +37,13 @@ BB_TipThanks<localizes>:message = "Text shown after the ghost pressed all button
 BB_TipScale<localizes>:message = "Size of the board and its mount (1 = about 5 m tall arch)."
 BB_TipSpeed<localizes>:message = "Animation speed (1 = one show every 10 seconds)."
 BB_TipSync<localizes>:message = "On: every Boo Board plays in sync. Off: each one starts at a random moment."
-BB_TipMount<localizes>:message = "How the board is held up. The board stands on the device and faces the same way as the device's screen. No Mount: the device marks the top centre of the board (wall signs)."
+BB_TipMount<localizes>:message = "How the board is held up. The board stands on the device and faces the same way as the device's screen. No Mount: just the board; its open bottom edge sits 20 cm above the device (put the device at the foot of a wall)."
 BB_TipHang<localizes>:message = "Chain length for Graveyard Arch / Lantern Post (cm)."
 BB_TipSway<localizes>:message = "How much a hanging board swings (degrees). Floating boards bob instead."
 BB_TipHeight<localizes>:message = "Floating Magic / Spider Thread: height of the board's top edge above the device (cm)."
-BB_TipNear<localizes>:message = "On: the board waits (closed) until a player comes close, then plays the show - and keeps playing while someone is near. Off: it loops forever."
+BB_TipNear<localizes>:message = "On: the board waits (closed) until a player comes close, then plays the show and repeats it while someone is near. When everyone has left it finishes the current show and stays closed. Off: it loops forever."
 BB_TipNearDist<localizes>:message = "How close a player must be to start the show (cm) when Play When Player Near is on."
-BB_TipDistance<localizes>:message = "0 = the board and its mount stand exactly on the device. Higher = that many cm in front of the device's screen. Ignored for No Mount."
+BB_TipDistance<localizes>:message = "0 = the board and its mount stand exactly on the device. Higher = that many cm in front of the device's screen."
 BB_TipCustom<localizes>:message = "Use the colours below instead of the Style."
 
 # All colours one style needs.
@@ -112,7 +112,7 @@ boo_board_device<public> := class(creative_device):
     PlayWhenPlayerNear:logic = false
 
     @editable_slider(float){MinValue := option{300.0}, MaxValue := option{6000.0}, ToolTip := BB_TipNearDist, Categories := array{BB_CatBoard}}
-    TriggerDistance:float = 2000.0
+    TriggerDistance:float = 1000.0
 
     # ---------------------------------------------------------------- 2 Mount
     @editable{ToolTip := BB_TipMount, Categories := array{BB_CatMount}}
@@ -180,7 +180,7 @@ boo_board_device<public> := class(creative_device):
         if (Sim := GetSimulationEntity[]):
             DT := BooBoardDeviceTransform(Self)
             Facing := ScreenFacing(DT.Rotation)
-            Ahead := if (Mount = boo_mount.NoMount) then 0.0 else DistanceFromDevice
+            Ahead := DistanceFromDevice
             Root := entity{}
             Root.AddComponents(array{transform_component{Entity := Root}})
             Root.SetLocalTransform(transform{
@@ -227,7 +227,8 @@ boo_board_device<public> := class(creative_device):
             SpawnBoard(Root, FloatHeight, Pal, Motion)
             SpawnFloatRing(Root, Pal)
         else:
-            SpawnBoard(Root, 0.0, Pal, boo_motion{Speed := Speed, Phase := Phase, Sway := 0.0, PivotUp := 0.0, Bob := 0.0})
+            # No Mount: like every mount, the device is the ground point; the open board ends just above it
+            SpawnBoard(Root, BB_OpenHeight + 20.0, Pal, boo_motion{Speed := Speed, Phase := Phase, Sway := 0.0, PivotUp := 0.0, Bob := 0.0})
 
     # ---------------------------------------------------------------- parts
     NewChild(Parent:entity, Left:float, Up:float):entity =

@@ -35,13 +35,13 @@ smooth at any frame rate, and every board on your island stays in sync (or not, 
 | | **Board Scale** | 0.4 – 3 (1 ≈ a 5.5 m arch) |
 | | **Animation Speed** | 0.4 – 2.5 (1 = one show every 11 s) |
 | | **Sync All Boards** | on: every board plays together · off: each starts at a random moment |
-| | **Play When Player Near** | off (default): the show loops forever · on: the board waits closed until a player comes close, then plays from the start (and keeps playing while someone is near) |
-| | **Trigger Distance** | how close a player must be for Play When Player Near (3 – 60 m) |
-| 2 Mount | **Mount** | Graveyard Arch · Lantern Post · Spider Thread · Floating Magic · No Mount (walls: the device = top centre of the board) |
+| | **Play When Player Near** | off (default): the show loops forever · on: the board waits closed until a player comes close, then plays from the start and repeats while someone is near; when everyone has left it finishes the current show and stays closed |
+| | **Trigger Distance** | how close a player must be for Play When Player Near (3 – 60 m, default 10 m) |
+| 2 Mount | **Mount** | Graveyard Arch · Lantern Post · Spider Thread · Floating Magic · No Mount (just the board, its open bottom edge 20 cm above the device — e.g. against a wall) |
 | | **Hang Length** | chain length for the arch / post (20 – 140 cm) |
 | | **Sway Amount** | how much a hanging board swings (0 = still) |
 | | **Float Height** | height of the board for Floating Magic / Spider Thread |
-| | **Distance From Device** | 0 (default) = exactly on the device; higher = that many cm in front of the device's screen (ignored for No Mount) |
+| | **Distance From Device** | 0 (default) = exactly on the device; higher = that many cm in front of the device's screen |
 | 3 Show / Hide | Ghost · Bats · Pumpkins · Candy Rain · Bursts | switch parts off |
 | 4 Custom Colors | **Use Custom Colors** + Board, Trim, Text, Like, Save, Follow, Ghost Glow, Mount | your own palette |
 

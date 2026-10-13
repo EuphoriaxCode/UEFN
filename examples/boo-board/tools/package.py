@@ -12,7 +12,7 @@ import zipfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 PROJECT = r"C:\Aeon.Bonjé\Euphoriax\UEFN Maps\LikeAndFavoriteHallow_Euphoriax"
 OUT = r"C:\Aeon.Bonjé\Euphoriax\BooBoard_Release"
-VERSION = "1.1.3"
+VERSION = "1.1.4"
 SKIP_DIRS = {".lore", "Saved", "Intermediate", "DerivedDataCache", "Binaries", ".vs", ".vscode", "BooBoardTest", "SpookySupport"}
 
 INSTALL = """BOO BOARD v{v} - free animated Halloween Like / Save / Follow sign for UEFN
@@ -32,7 +32,7 @@ INSTALL
 
 DETAILS PANEL
  1 Board        Style, Headline (5 texts), Thanks Message (4 texts), Board Scale, Animation Speed, Sync All Boards,
-                Play When Player Near (tick it: the show only plays when a player comes close) + Trigger Distance
+                Play When Player Near (tick it: the show only plays when a player comes close) + Trigger Distance (10 m)
  2 Mount        Graveyard Arch / Lantern Post / Spider Thread / Floating Magic / No Mount,
                 Hang Length, Sway Amount, Float Height, Distance From Device
  3 Show / Hide  Ghost, Bats, Pumpkins, Candy Rain, Bursts
@@ -41,7 +41,9 @@ DETAILS PANEL
 GOOD TO KNOW
 - All animation runs in the materials on each player's machine: smooth and zero server cost.
 - The board is a guide; players like / save / follow in the real Fortnite menu.
-- By default the show loops forever. Tick "Play When Player Near" to start it only when someone walks up.
+- By default the show loops forever. Tick "Play When Player Near" to start it only when someone walks up;
+  when everyone has left it finishes the current show (max 11 s) and stays closed.
+- No Mount: just the board, its open bottom edge 20 cm above the device (place the device at the foot of a wall).
 - Everything was drawn/modelled from code; fonts used for the textures are SIL OFL (Montserrat, Poppins).
 
 Made by Euphoriax - free to use in your islands.
