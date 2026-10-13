@@ -76,12 +76,14 @@ KM := keyframed_movement_component{Entity := E}
 E.AddComponents(array{KM})
 KM.SetKeyframes(array{
     keyframed_movement_delta{Transform := transform{Translation := vector3{Forward := 0.0, Left := 0.0, Up := 300.0},
-                                                    Rotation := IdentityRotation(), Scale := vector3{Forward := 1.0, Left := 1.0, Up := 1.0}},
+                                                    Rotation := IdentityRotation(), Scale := vector3{Forward := 0.0, Left := 0.0, Up := 0.0}},
                              Duration := 1.0, Easing := ease_in_out_cubic_bezier_easing_function{}}},
     oneshot_keyframed_movement_playback_mode{})   # or loop_ / pingpong_
 KM.Play();  KM.FinishedEvent.Await()
 ```
 - Deltas are **relative and cumulative**, applied in **parent space** (a yaw in delta 1 does not rotate delta 2's translation).
+- ⚠️ **Translation AND Scale are additive** (digest comment): `Scale := (1,1,1)` grows the entity by +1 per keyframe.
+  Use `(0,0,0)` to keep the size (LOG E30).
 - No editor properties — keyframes only from Verse.
 
 ## Players

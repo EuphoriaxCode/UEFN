@@ -4,3 +4,7 @@ art_out/
 sid.txt
 viewport.png
 call_image_*.png
+
+# boo-board: generated meshes and rendered video (rebuild with tools/)
+examples/boo-board/meshes/
+examples/boo-board/promo/*.mp4

@@ -51,12 +51,20 @@ Details + evidence live in `topics/`. **If a rule here conflicts with your insti
 - Archetype `dr_save:` with indented fields cannot be written inline as a call argument — assign to a name first.
 - `canvas_slot.ZOrder` is a constrained int type; parameters must be typed `type{_X:int where 0 <= _X, _X <= 2147483647}`.
 - No lambdas: pass bound methods, or use an abstract class with an overridable method.
+- Archetype blocks: one `Field := value` per line (commas → error 3552). Don't reuse a method/inherited name (`Show`, `Length`,
+  a helper `C()`) as a field, local or parameter name (3532/3588). `texture` type needs `using { /Verse.org/Assets }`.
 
 ## 4. Materials
 - **Custom (HLSL) node compiles but is NOT supported in UEFN** → build graphs from standard nodes.
 - UI materials: `materialDomain MD_UI`, `BLEND_Translucent`, `MSM_Unlit`; animate with `Time` (Sine/Cosine use period 1 = Hz).
   Continuous/passive motion belongs in materials (client-side, smooth); Verse field tweens run at server tick (~30 Hz).
 - Custom node `inputs` array: when adding elements, resend the existing element unchanged plus the new one.
+
+- `ObjectPositionWS` = centre of the mesh **bounds**, not its pivot → use `TransformPosition` Local→World of (0,0,0).
+  Verse `color` → material vector param can't carry world-size numbers (clamped) → use scalar params.
+- Never give two material parameters the same name (they share one value). Particle quads: keep UV.x inside (i, i+1).
+- Continuous/looping animation of world props: drive it with WPO + `Time` in the material (client-smooth, in sync, free);
+  `LocalPosition` in WPO is the undeformed vertex position (see `topics/animation.md`).
 
 ## 5. Textures
 - `TextureTools.import_file` cannot overwrite → import as `_v2`, repoint brushes/MIs, delete the old asset (check `get_referencers`).
@@ -97,6 +105,9 @@ Details + evidence live in `topics/`. **If a rule here conflicts with your insti
   `rigid_body_component`, `tag_component`, `modular_vehicle_*`, `RenderSettings_*`… Place them with the toolset; Verse can't reference them.
   Check `catalog/scene-graph/component-atlas.md` ("Verse ✅") before planning runtime logic around a component.
 - `keyframed_movement_component` has no editor properties → keyframes come from Verse `SetKeyframes`.
+  Delta `Translation` and `Scale` are **additive** → `Scale := vector3{0,0,0}` keeps the size ((1,1,1) makes it grow).
+- OBJ with several `usemtl` groups → one mesh, one slot per group. MI assets are Verse classes and texture params are
+  settable from Verse (`set M.Mask = T_X`).
 - Custom static meshes become `class(mesh_component)` with `@editable var <Slot>:material` per material slot → recolourable;
   `BasicShapes.*` have no slots. Niagara systems become `class(particle_system_component)`.
 

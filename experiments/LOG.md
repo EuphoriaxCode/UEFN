@@ -256,3 +256,87 @@ C04 AddCamera succeeded; holding for 12 s  ...  camera released
 - Editor-placed entities with kit meshes can be repainted at runtime: `GetComponent[SM_SG_cube]` → `set Mesh.Main = M_SG_Color{}`.
 - View ray: `FromRotation(fort_character.GetViewRotation()).GetForwardAxis()` (in the bridge file; type-annotate the
   converted rotation as `(/Verse.org/SpatialMath:)rotation` so `GetForwardAxis` resolves).
+
+## 2026-10-12 — session 2: Boo Board (`examples/boo-board`)
+
+### E24 ✅ Whole choreographies in materials (client-side, zero Verse ticking)
+- A Time-driven **World Position Offset** animates Scene Graph custom-mesh components in the editor viewport AND in game.
+  One loop clock `tau = frac((Time*Speed + Phase)/Period)*Period` in every material keeps 18 parts in sync without any server work.
+- `LocalPosition` (output `Z`/`XYZ`) inside the WPO graph is the **undeformed** vertex position → masks like
+  "vertices below z = -140 slide down" stretch a panel open (`M_BB_Panel`).
+- Offsets built in mesh space → `Transform` node (Local→World) → board rotation/scale just work. `RotateAboutAxis` (angle in
+  turns) gives sway/spin; pivot = `ObjectPositionWS + Transform(local pivot)`.
+- **Material particles**: N quads stacked at the emitter, UV.x = index + 0.02 + 0.96·u. Decode `floor(uv.x)` / `(frac(uv.x)-0.02)/0.96`.
+  ❌ First try used UV.x = i..i+1 → the right-edge vertices decoded as particle i+1 → long stretched streaks.
+- ❌ Two `ScalarParameter` nodes with the same name ("Speed" for the loop and "Speed" for particle velocity) silently share
+  one value → the MI's particle speed (120) became the loop speed. Use unique names.
+- `get_statistics` after `recompile` returns instruction counts only when the shader compiled (cheap compile check).
+- Builder: `examples/boo-board/tools/matgraph.py` — Python expressions → one `execute_tool_script` call (200-node material ≈ 6 s).
+
+### E25 ✅ Multi-slot meshes, MIs and textures from Verse
+- An OBJ with several `usemtl` groups imports as one StaticMesh with one **material slot per group** (names kept);
+  the generated Verse class gets `var <Slot>:material` for each → one entity carries 18 independently animated parts.
+- MI assets are Verse classes too (`MI_BB_Trim{}`); **texture parameters are exposed** (`var Mask:texture`) and accept project
+  textures (`set M.Mask = T_BB_Header_2`) → one master material, text presets switched from a Details-panel enum.
+  `texture` needs `using { /Verse.org/Assets }`.
+- Editor-placed entities with the mesh (default MIs) animate with no Verse at all → "drop-in" variant.
+
+### E26 ⚠️ Verse traps hit while writing the device
+- Archetype blocks (`boo_palette:` + indented fields): **one field per line**; `A := x, B := y` on one line → 3552
+  "Unsupported argument to archetype instantiation" (+ 3600 "must initialize data member" cascades).
+- Names inside a class collide: archetype field `Pumpkin` vs method `Pumpkin()`, local `C` vs method `C()`, param `Show` vs
+  `creative_device.Show()`, param `Length` vs SpatialMath `operator'.Length'` → 3532/3588. Suffix helpers (`PumpkinMat`, `Col`).
+- Verified syntax: `@editable{ToolTip := Tip, Categories := array{Cat}}` and
+  `@editable_slider(float){MinValue := option{0.4}, MaxValue := option{3.0}, ToolTip := Tip, Categories := array{Cat}}`
+  (`Tip<localizes>:message = "..."`). Categories group the Details panel.
+- No Verse API returns a player's avatar/portrait texture (42.30; searched all digests). `has_icon.Icon` is for items.
+
+### E27 ⚠️ Pipeline papercuts
+- Re-import of a mesh used by a level entity: `asset.delete` returns **False** but the asset is gone; the next `import_file`
+  can fail once with "already exists" → retry after ~1.5 s (`import_assets.py`). Delete level entities first.
+- `TeleportTo` to z = 0 fails ("Something is colliding with the requested destination") → use the capsule centre (z ≈ 120).
+- Day Sequence device is a Blueprint (not a Verse device): `device props` fails; use `ObjectTools.list_properties` /
+  `set_properties`: `dayNightCycleMode: "FixedTime"`, `dayNightCycleTime: 22`, `overrideSky`, `skyGradient*Color`,
+  `overrideFog`/`fogDensity`, `overrideSkylight` — the editor viewport updates immediately.
+- `CaptureViewport` has no resolution argument: the image is the viewport panel size.
+
+### E28 ✅ Frame-exact promo video from the editor viewport (`examples/boo-board/tools/promo.py`, `compose.py`)
+- Every material got `FreezeTime`/`FrozenTime` (lerp with `Time`). Per frame: set `FrozenTime` on all 25 MIs in ONE
+  `execute_tool_script` call, then `CaptureViewport` with an explicit pose → 1170 frames at ~1.8 s each (~35 min), perfectly
+  smooth at any capture speed. Then Pillow titles + ffmpeg (x264 CRF 16) → 37.7 s 1080p.
+- Captures are the viewport panel size (1529×847 here) and include the axis gizmo bottom-left → crop (140,0)-(1529,781) = 16:9.
+- Night look for promos: Day Sequence device `FixedTime` 22:00 + `overrideSky` purple gradient + light fog (0.06).
+- Remember to set `FreezeTime` back to 0 afterwards (editor-placed drop-in boards use the MI assets).
+- Closing UEFN from a script: `AssetTools.save_assets([])`, `is_dirty` = false on the level, `SessionToolset` stop, then
+  `taskkill /IM UnrealEditorFortnite-Win64-Shipping.exe` (no /F) → editor exited cleanly in 30 s.
+
+### E29 ✅ "Play when a player is near" for a material-driven show (Boo Board v1.1)
+- Problem: the show runs on each client's material `Time`; the server can't start it at a moment the client knows.
+- ✅ Solution: a **keyframed-movement clock**. Verse slides the board entity +2 cm/s (`keyframed_movement_component`,
+  linear, one-shot, duration = show length) when `BooBoardPlayerWithin` succeeds; the material reads
+  `dot(pivot − anchor, localX)/|localX|² / rate` as `tau` and adds `anchor − pivot` to the WPO so the board stays put.
+  Shows alternate +D / −D (direction flag = 0.5 cm upward offset set while idle) → never a visible jump back.
+  In game: show starts at the trigger, plays fully, board doesn't drift; the backward show also plays forward.
+- ❌ **`ObjectPositionWS` is the centre of the mesh BOUNDS, not the pivot** (here 140 cm lower, 27 cm forward) → the board
+  floated up/forward. Use `TransformPosition` (Local → World) of (0,0,0) (`matgraph.Graph.pivot()`). This also fixed the
+  sway pivot and the ghost's spin centre.
+- ❌ A Verse `color` written to a material **vector** parameter does not carry world-size values (1500 cm arrived as ~1;
+  clamped) → pass world positions as three **scalar** parameters.
+- Keyframed movement deltas are in PARENT space: device yawed 180° → +Forward moved the board −X in the world (as expected).
+
+### E30 ❌→✅ Keyframed movement: Scale is ADDITIVE (Boo Board v1.1.1)
+- User report: "the board keeps growing" with Play When Player Near. Cause: `keyframed_movement_delta.Transform.Scale` was
+  `(1,1,1)`; the digest says "Translation and Scale are interpreted additively" → +1 scale per show. Fix: `(0,0,0)`.
+  The E12 snippet in `topics/scene-graph-runtime.md` had the same mistake (corrected). Verified the material clock
+  compensation separately in the editor: moving the board entity 100 cm with ClockMode = 1 → board visually unchanged.
+- Verse devices show their marker mesh in game unless "Visible in Game" is off → call `Hide()` in `OnBegin` when the
+  device only spawns content. Board now spawns `DistanceFromDevice` (default 250 cm) in front of the device
+  (`DT.Translation + DT.Rotation.GetForwardAxis() * Ahead`).
+
+### E31 ✅ Which way does a Verse device "face"? (Boo Board v1.1.2)
+- The Verse device marker (the console model) shows its screen on its **right** side: device local +Y (Unreal) = Verse
+  **−Left**, not along Forward (+X, the blue F arrow of the UEFN 42 gizmo; gizmo colours: F blue, L red, U green).
+  Users aim the screen, so content spawned "in front of the device" should use the screen direction:
+  `MakeRotationDegrees(Up, ±90) * DeviceRotation` (right-handed: +90 about Up takes Forward to Left) — the device picks the
+  sign by checking `GetForwardAxis()` against `−GetLeftAxis()`. Verified in game: screen aimed at spawn → board front visible.
+- Rotation composition: `operator'*'(PreRotation, PostRotation)`; local turn first, then the device rotation.

@@ -30,3 +30,14 @@ Two layers — use both:
 - Make one material per effect, Material Instances per texture/phase/tint.
 
 Widget animations (UMG `UWidgetAnimation`) can be authored via toolset, but **cannot be triggered from Verse** (pins not settable).
+
+## World-space animation in materials (Scene Graph meshes) — `examples/boo-board`
+For props, signs and showcases, put the WHOLE timeline in the materials (WPO + emissive) instead of moving entities from Verse:
+- Every part's material reads the same loop clock (`tau`) → perfectly in sync, smooth at any client frame rate, no server cost.
+- Recipes (all standard nodes): pop-in = `OutBack(saturate((tau-t0)/d))` scaling `(LocalPos - Centre)`; slide/stretch =
+  offset vertices below a `LocalPosition.Z` threshold; keyframed paths = `K0 + Σ ΔK_i · SmoothStep(t_i, t_i+1, tau)`;
+  press = half-sine bump; spin = `RotateAboutAxis`; particles = quads with the index in UV.x (see LOG E24).
+- Verse only builds the entity once and sets per-entity parameters (colours, Phase, Speed, textures).
+- Frame-exact renders for promo videos: add `FreezeTime`/`FrozenTime` params that replace `Time`, then step them per capture.
+- Need the show to START on an event (player nearby)? Slide the entity slowly with a `keyframed_movement_component` and let
+  the material read the slide as its clock (and cancel it in WPO) — client-smooth, server-started (LOG E29).
