@@ -51,12 +51,20 @@ Details + evidence live in `topics/`. **If a rule here conflicts with your insti
 - Archetype `dr_save:` with indented fields cannot be written inline as a call argument — assign to a name first.
 - `canvas_slot.ZOrder` is a constrained int type; parameters must be typed `type{_X:int where 0 <= _X, _X <= 2147483647}`.
 - No lambdas: pass bound methods, or use an abstract class with an overridable method.
+- Archetype blocks: one `Field := value` per line (commas → error 3552). Don't reuse a method/inherited name (`Show`, `Length`,
+  a helper `C()`) as a field, local or parameter name (3532/3588). `texture` type needs `using { /Verse.org/Assets }`.
 
 ## 4. Materials
 - **Custom (HLSL) node compiles but is NOT supported in UEFN** → build graphs from standard nodes.
 - UI materials: `materialDomain MD_UI`, `BLEND_Translucent`, `MSM_Unlit`; animate with `Time` (Sine/Cosine use period 1 = Hz).
   Continuous/passive motion belongs in materials (client-side, smooth); Verse field tweens run at server tick (~30 Hz).
 - Custom node `inputs` array: when adding elements, resend the existing element unchanged plus the new one.
+
+- `ObjectPositionWS` = centre of the mesh **bounds**, not its pivot → use `TransformPosition` Local→World of (0,0,0).
+  Verse `color` → material vector param can't carry world-size numbers (clamped) → use scalar params.
+- Never give two material parameters the same name (they share one value). Particle quads: keep UV.x inside (i, i+1).
+- Continuous/looping animation of world props: drive it with WPO + `Time` in the material (client-smooth, in sync, free);
+  `LocalPosition` in WPO is the undeformed vertex position (see `topics/animation.md`).
 
 ## 5. Textures
 - `TextureTools.import_file` cannot overwrite → import as `_v2`, repoint brushes/MIs, delete the old asset (check `get_referencers`).
@@ -91,6 +99,35 @@ Details + evidence live in `topics/`. **If a rule here conflicts with your insti
 - Basic-shape meshes have **no material property** (editor or Verse) → carry color with lights, or use other meshes.
 - Find parts by component type (`FindDescendantComponents`), never by entity name.
 - `OnBeginSimulation` re-runs on session start and Stop/Start Game → apply initial state there.
+
+- **Never `AddComponent(UI_grid_container_component)` on a bare entity — it crashes the editor** (access violation). Don't bulk-probe `UI_*` components.
+- 86 of the ~150 attachable component classes are **editor-only** (not in the Verse digests): `text_display_component`, `decal_component`,
+  `rigid_body_component`, `tag_component`, `modular_vehicle_*`, `RenderSettings_*`… Place them with the toolset; Verse can't reference them.
+  Check `catalog/scene-graph/component-atlas.md` ("Verse ✅") before planning runtime logic around a component.
+- `keyframed_movement_component` has no editor properties → keyframes come from Verse `SetKeyframes`.
+  Delta `Translation` and `Scale` are **additive** → `Scale := vector3{0,0,0}` keeps the size ((1,1,1) makes it grow).
+- OBJ with several `usemtl` groups → one mesh, one slot per group. MI assets are Verse classes and texture params are
+  settable from Verse (`set M.Mask = T_X`).
+- Custom static meshes become `class(mesh_component)` with `@editable var <Slot>:material` per material slot → recolourable;
+  `BasicShapes.*` have no slots. Niagara systems become `class(particle_system_component)`.
+
+## 8b. Scene Graph runtime (details: `topics/scene-graph-runtime.md`)
+- Spawn: `E := entity{}; E.AddComponents(array{transform_component{Entity := E}, cube{Entity := E}}); E.SetLocalTransform(T); Parent.AddEntities(array{E})`.
+  **Set the transform BEFORE AddEntities** — otherwise collision stays at the parent origin for one tick (bad queries/events).
+- Verse `vector3`: Forward = UE +X, **Left = UE −Y**, Up = +Z.
+- Per-entity colour: import your own mesh + parameterised material; `set Mesh.<Slot> = M_X{}` and `set M.Color = ...` at runtime.
+  Code using asset classes must sit in the **parent folder of the asset folders** (they're internal modules).
+- Player entities aren't spatial (transform 0,0,0) → follow characters by setting the transform each `PostPhysics` tick.
+- Qualified names `(/Mod:)X` need `using { /Mod }` too; keep old/new SpatialMath bridges in a separate file.
+
+## 9a. Discovery & tooling (use the CLI: `cli/README.md`)
+- Read `catalog/` before calling a tool you haven't used: every toolset's inputs AND outputs are there.
+- Verse API: `uefn digest <Module>` / `--grep` / `--class`. Project digests exist only while the editor is open;
+  `VerseProject/FortniteGame/Digests/BuiltIn` is a persistent copy of the built-in ones.
+- Toolsets registered in the log but not in `list_toolsets` (PCG, Cheats, ConfigSettings, StateTree, SourceControl…) are NOT reachable.
+- `VerseToolset.ListFiles` requires `bRecursive`. The project's Verse root is `/<plugin-guid>` (from `ListFiles("")`).
+- Each MCP call costs ~1 editor frame; a background (unfocused) editor runs ~3 FPS → ~330 ms per call. Batch big builds with
+  `uefn sg build` (one `execute_tool_script` round-trip).
 
 ## 9. What the agent cannot do (don't burn time)
 - Create/edit prefab assets; link device references; drive the editor UI.
