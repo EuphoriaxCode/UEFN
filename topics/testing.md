@@ -25,3 +25,10 @@ T(S+'StartGame',{})
 9. Session start validation needs exactly one Island Settings device; a failed start leaves a blocking "Unable to Play" modal.
 
 Debug options in the daily reward device: `SecondsPerDay`, `ResetProgressOnJoin`, `DebugAutoClaimAfter`, `AutoOpenOnJoin`, `AutoCloseAfter`.
+
+10. Spawn the player where you want to look: `StartSession(location={x,y,z}, rotation={pitch,yaw,roll})` (Play From Here),
+    poll `GetSessionStatus` = Connected + `GetGameState` = Running, then record the client:
+    `scripts/windows/record_window.ps1 -Process FortniteClient-Win64-Shipping -Seconds 12 -Fps 1` (frames + `frames.txt`).
+11. "Validation failed": grep the editor log on disk for `UEFNValidation` — disallowed engine references are listed
+    per asset (`MCP_RULES.md` §9b).
+

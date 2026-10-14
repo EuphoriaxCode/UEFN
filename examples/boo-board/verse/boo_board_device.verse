@@ -1,12 +1,45 @@
-# ------------------------------------------------------------------------------------------------
-#  BOO BOARD  -  a free, animated Halloween "Like / Save / Follow" sign for UEFN.
-#
-#  Drop the device in your level, pick a Style and a Mount in the Details panel, play.
-#  All animation runs inside the materials on each player's machine (smooth, zero server cost);
-#  this device only builds the board once and hands every part its colours and settings.
-#
-#  Needs: Scene Graph enabled in the project (Project Settings), and the BooBoard folder next to this file.
-# ------------------------------------------------------------------------------------------------
+<#  
+    _____                                                                                                     _____ 
+   ( ___ )                                                                                                   ( ___ )
+    |   |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ DEVELOPED BY: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|   |
+    |   |     ______     __  __     ______    __  __     ______     ______     __     ______     __  __       |   |
+    |   |    /\  ___\   /\ \/\ \   /\  == \  /\ \_\ \   /\  __ \   /\  == \   /\ \   /\  __ \   /\_\_\_\      |   |
+    |   |    \ \  __\   \ \ \_\ \  \ \  _-/  \ \  __ \  \ \ \/\ \  \ \  __<   \ \ \  \ \  __ \  \/_/\_\/_     |   |
+    |   |     \ \_____\  \ \_____\  \ \_\     \ \_\ \_\  \ \_____\  \ \_\ \_\  \ \_\  \ \_\ \_\   /\_\/\_\    |   |
+    |   |      \/_____/   \/_____/   \/_/      \/_/\/_/   \/_____/   \/_/ /_/   \/_/   \/_/\/_/   \/_/\/_/    |   | 
+    |   |                                                                                                     |   | 
+    |___|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|___| 
+   (_____)                                                                                                   (_____)
+
+    _____                                                                                                     _____ 
+   ( ___ )                                                                                                   ( ___ )
+    |   |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ EUPHORIAX USAGE TERMS: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|   |
+    |   |                                                                                                     |   |
+    |   |  Copyright (c) 2026 Euphoriax. All rights reserved.                                                 |   |
+    |   |                                                                                                     |   |
+    |   |  This software, along with any associated materials, is provided as is and is the intellectual      |   |
+    |   |  property of Euphoriax, where applicable under existing laws.                                       |   |
+    |   |                                                                                                     |   |
+    |   |  Unauthorized replication, distribution, or modification of this Software without                   |   |
+    |   |  permission from Euphoriax is not permitted.                                                        |   |
+    |   |                                                                                                     |   |
+    |   |  USAGE AGREEMENT: By using this Software, you agree to respect the terms and intent outlined in     |   |
+    |   |  this notice.You may use, modify, and distribute the Software in                                    |   |
+    |   |  accordance with the terms outlined here or agreed upon separately with Euphoriax.                  |   |
+    |   |                                                                                                     |   |
+    |   |  If you have any questions regarding usage or permissions, please contact us.                       |   |
+    |   |                                                                                                     |   |
+    |   |  Thank you for respecting the work and intentions behind Euphoriax.                                 |   |
+    |   |                                                                                                     |   |
+    |   |  _____________________                                                                              |   |
+    |   |  discord.gg/euphoriax                                                                               |   |
+    |   |  youtube.com/@euphoriax_official                                                                    |   |
+    |   |  x.com/Euphoriax_Fn                                                                                 |   |
+    |   |  instagram.com/euphoriax_official                                                                   |   |
+    |   |                                                                                                     |   |
+    |___|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|___| 
+   (_____)                                                                                                   (_____)
+#>
 
 using { /Fortnite.com/Devices }
 using { /Verse.org/Simulation }
@@ -24,29 +57,27 @@ using { Textures }
 boo_style<public> := enum{PumpkinNight, GhostlyMint, WitchBrew, BloodMoon, CandyPop}
 boo_mount<public> := enum{GraveyardArch, LanternPost, SpiderThread, FloatingMagic, NoMount}
 boo_headline<public> := enum{EnjoyingTheMap, HavingFun, HappyHalloween, SupportThisMap, SpookyGoodTime}
-boo_thanks<public> := enum{ThanksBoo, ThankYou, YouRock, Spooktacular}
+boo_thanks<public> := enum{ThanksBoo, ThankYou, YouRock, Spooktacular, StaySpooky}
 
-# Details panel categories and tooltips
 BB_CatBoard<localizes>:message = "1  Board"
 BB_CatMount<localizes>:message = "2  Mount"
 BB_CatShow<localizes>:message = "3  Show / Hide"
 BB_CatColors<localizes>:message = "4  Custom Colors"
-BB_TipStyle<localizes>:message = "Colour theme of the whole board (ignored when Use Custom Colors is on)."
-BB_TipHeadline<localizes>:message = "Text on the top of the board."
-BB_TipThanks<localizes>:message = "Text shown after the ghost pressed all buttons."
-BB_TipScale<localizes>:message = "Size of the board and its mount (1 = about 5 m tall arch)."
-BB_TipSpeed<localizes>:message = "Animation speed (1 = one show every 10 seconds)."
-BB_TipSync<localizes>:message = "On: every Boo Board plays in sync. Off: each one starts at a random moment."
-BB_TipMount<localizes>:message = "How the board is held up. The board stands on the device and faces the same way as the device's screen. No Mount: just the board; its open bottom edge sits 20 cm above the device (put the device at the foot of a wall)."
-BB_TipHang<localizes>:message = "Chain length for Graveyard Arch / Lantern Post (cm)."
-BB_TipSway<localizes>:message = "How much a hanging board swings (degrees). Floating boards bob instead."
-BB_TipHeight<localizes>:message = "Floating Magic / Spider Thread: height of the board's top edge above the device (cm)."
-BB_TipNear<localizes>:message = "On: the board waits (closed) until a player comes close, then plays the show and repeats it while someone is near. When everyone has left it finishes the current show and stays closed. Off: it loops forever."
-BB_TipNearDist<localizes>:message = "How close a player must be to start the show (cm) when Play When Player Near is on."
-BB_TipDistance<localizes>:message = "0 = the board and its mount stand exactly on the device. Higher = that many cm in front of the device's screen."
-BB_TipCustom<localizes>:message = "Use the colours below instead of the Style."
+BB_TipStyle<localizes>:message = "Color theme of the board (not used when Use Custom Colors is on)."
+BB_TipHeadline<localizes>:message = "Text at the top of the board."
+BB_TipThanks<localizes>:message = "Text after the ghost clicked all buttons."
+BB_TipScale<localizes>:message = "Size of the board and mount (1 = arch of about 5 m)."
+BB_TipSpeed<localizes>:message = "Animation speed (1 = one show every 11 seconds)."
+BB_TipSync<localizes>:message = "On: all Boo Boards play at the same time. Off: each one starts at a random moment."
+BB_TipMount<localizes>:message = "How the board hangs. It stands on the device and faces the same way as the device screen. No Mount = only the board, 20 cm above the device (nice against a wall)."
+BB_TipHang<localizes>:message = "Chain length for Graveyard Arch and Lantern Post (cm)."
+BB_TipSway<localizes>:message = "How much a hanging board swings (degrees)."
+BB_TipHeight<localizes>:message = "Height of the board for Floating Magic and Spider Thread (cm)."
+BB_TipNear<localizes>:message = "On: the board stays closed until a player comes close, then plays. When everyone left it finishes the show and closes. Off: plays forever."
+BB_TipNearDist<localizes>:message = "How close a player has to be to start the show (cm)."
+BB_TipDistance<localizes>:message = "0 = right on the device. Higher = that many cm in front of the device screen."
+BB_TipCustom<localizes>:message = "Use the colors below instead of the Style."
 
-# All colours one style needs.
 boo_palette<internal> := struct:
     BoardTop:color
     BoardBottom:color
@@ -70,26 +101,23 @@ boo_palette<internal> := struct:
     Glow:color
     Pumpkin:color
 
-# Shared animation settings for every board part.
 boo_motion<internal> := struct:
     Speed:float
     Phase:float
     Sway:float
     PivotUp:float
     Bob:float
-    # "Play when a player is near": the board entity slides ClockRate cm per show-second (keyframed movement)
-    # and the materials read that slide as their clock (and cancel it, so the board looks still).
+    # play when player near
     ClockMode:float = 0.0
     AnchorX:float = 0.0
     AnchorY:float = 0.0
     AnchorZ:float = 0.0
 
-BB_ClockRate<internal>:float = 2.0       # cm of slide per second of show
-BB_ClockFlag<internal>:float = 0.5       # upward offset that tells the materials the show runs backwards
+BB_ClockRate<internal>:float = 2.0
+BB_ClockFlag<internal>:float = 0.5
 
 boo_board_device<public> := class(creative_device):
 
-    # ---------------------------------------------------------------- 1 Board
     @editable{ToolTip := BB_TipStyle, Categories := array{BB_CatBoard}}
     Style:boo_style = boo_style.PumpkinNight
 
@@ -114,7 +142,6 @@ boo_board_device<public> := class(creative_device):
     @editable_slider(float){MinValue := option{300.0}, MaxValue := option{6000.0}, ToolTip := BB_TipNearDist, Categories := array{BB_CatBoard}}
     TriggerDistance:float = 1000.0
 
-    # ---------------------------------------------------------------- 2 Mount
     @editable{ToolTip := BB_TipMount, Categories := array{BB_CatMount}}
     Mount:boo_mount = boo_mount.GraveyardArch
 
@@ -130,7 +157,6 @@ boo_board_device<public> := class(creative_device):
     @editable_slider(float){MinValue := option{0.0}, MaxValue := option{1500.0}, ToolTip := BB_TipDistance, Categories := array{BB_CatMount}}
     DistanceFromDevice:float = 0.0
 
-    # ---------------------------------------------------------------- 3 Show / Hide
     @editable{Categories := array{BB_CatShow}}
     ShowGhost:logic = true
 
@@ -146,7 +172,6 @@ boo_board_device<public> := class(creative_device):
     @editable{Categories := array{BB_CatShow}}
     ShowBursts:logic = true
 
-    # ---------------------------------------------------------------- 4 Custom colours
     @editable{ToolTip := BB_TipCustom, Categories := array{BB_CatColors}}
     UseCustomColors:logic = false
 
@@ -174,9 +199,8 @@ boo_board_device<public> := class(creative_device):
     @editable{Categories := array{BB_CatColors}}
     MountColor:color = color{R := 0.045, G := 0.028, B := 0.03}
 
-    # ---------------------------------------------------------------- build
     OnBegin<override>()<suspends>:void =
-        Hide()      # the device itself is only a marker
+        Hide()
         if (Sim := GetSimulationEntity[]):
             DT := BooBoardDeviceTransform(Self)
             Facing := ScreenFacing(DT.Rotation)
@@ -190,8 +214,7 @@ boo_board_device<public> := class(creative_device):
             Sim.AddEntities(array{Root})
             Build(Root)
 
-    # The device's console model shows its screen on its right side (Verse: -Left), not along Forward.
-    # Turn the board 90 degrees so it faces the same way as that screen; pick the sign by checking the result.
+    # board faces the same way as the device screen
     ScreenFacing(Device:rotation):rotation =
         Want := Device.GetLeftAxis()
         Up := vector3{Forward := 0.0, Left := 0.0, Up := 1.0}
@@ -227,10 +250,8 @@ boo_board_device<public> := class(creative_device):
             SpawnBoard(Root, FloatHeight, Pal, Motion)
             SpawnFloatRing(Root, Pal)
         else:
-            # No Mount: like every mount, the device is the ground point; the open board ends just above it
             SpawnBoard(Root, BB_OpenHeight + 20.0, Pal, boo_motion{Speed := Speed, Phase := Phase, Sway := 0.0, PivotUp := 0.0, Bob := 0.0})
 
-    # ---------------------------------------------------------------- parts
     NewChild(Parent:entity, Left:float, Up:float):entity =
         E := entity{}
         E.AddComponents(array{transform_component{Entity := E}})
@@ -249,7 +270,7 @@ boo_board_device<public> := class(creative_device):
         var A:boo_motion = Motion
         if (PlayWhenPlayerNear?):
             G := E.GetGlobalTransform().Translation
-            # material anchor in Unreal world space (X = Forward, Y = -Left, Z = Up)
+            # world position for the materials
             set A = boo_motion{Speed := Motion.Speed, Phase := 0.0, Sway := Motion.Sway, PivotUp := Motion.PivotUp, Bob := Motion.Bob,
                                ClockMode := 1.0, AnchorX := G.Forward, AnchorY := -G.Left, AnchorZ := G.Up}
             KM := keyframed_movement_component{Entity := E}
@@ -284,8 +305,7 @@ boo_board_device<public> := class(creative_device):
         set M.Bats = BatsMat(A)
         set M.Pumpkins = PumpkinMat(P, ShowPumpkins, A)
 
-    # Plays one show each time a player is near. Shows alternate forward / backward so the board never jumps back:
-    # forward slides 0 -> D, backward D -> 0; the direction flag (a tiny upward offset) is flipped while idle.
+    # plays the show while a player is near
     TriggerLoop(Board:entity, KM:keyframed_movement_component, Speed:float)<suspends>:void =
         Base := Board.GetLocalTransform()
         D := BB_ClockRate * BB_Period
@@ -300,14 +320,13 @@ boo_board_device<public> := class(creative_device):
                 Transform := transform{
                     Translation := vector3{Forward := Step, Left := 0.0, Up := 0.0},
                     Rotation := IdentityRotation(),
-                    # keyframe Translation AND Scale are additive: 0 = keep the size
+                    # scale gets added, 0 keeps the size
                     Scale := vector3{Forward := 0.0, Left := 0.0, Up := 0.0}},
                 Duration := BB_Period / Speed,
                 Easing := linear_easing_function{}}}, oneshot_keyframed_movement_playback_mode{})
             KM.Play()
             KM.FinishedEvent.Await()
             set Forward = if (Forward?) then false else true
-            # idle now; flip the direction flag without moving along the clock axis
             Slide := if (Forward?) then 0.0 else D
             Flag := if (Forward?) then 0.0 else BB_ClockFlag
             Board.SetLocalTransform(transform{
@@ -371,7 +390,7 @@ boo_board_device<public> := class(creative_device):
         E.AddComponents(array{M})
         Root.AddEntities(array{E})
 
-    # An invisible box so players can't walk through a post.
+    # invisible collision for the posts
     Collider(Root:entity, Left:float, Width:float, Height:float):void =
         E := NewChild(Root, Left, Height * 0.5)
         E.SetLocalTransform(transform{
@@ -385,7 +404,6 @@ boo_board_device<public> := class(creative_device):
 
     StillMotion():boo_motion = boo_motion{Speed := 1.0, Phase := 0.0, Sway := 0.0, PivotUp := 0.0, Bob := 0.0}
 
-    # ---------------------------------------------------------------- materials (one instance per part)
     PanelMat(Top:color, Bottom:color, Rim:color, Emissive:color, Strength:float, DividerMode:float, RimOff:float, A:boo_motion):M_BB_Panel =
         M := M_BB_Panel{}
         set M.ColorTop = Top
@@ -567,7 +585,6 @@ boo_board_device<public> := class(creative_device):
         set M.ClockAnchorZ = A.AnchorZ
         M
 
-    # ---------------------------------------------------------------- texts
     HeadlineTexture():texture =
         case (Headline):
             boo_headline.HavingFun => T_BB_Header_1
@@ -581,9 +598,9 @@ boo_board_device<public> := class(creative_device):
             boo_thanks.ThankYou => T_BB_Thanks_1
             boo_thanks.YouRock => T_BB_Thanks_2
             boo_thanks.Spooktacular => T_BB_Thanks_3
+            boo_thanks.StaySpooky => T_BB_Thanks_4
             _ => T_BB_Thanks_0
 
-    # ---------------------------------------------------------------- colours
     Palette():boo_palette =
         Base := StylePalette(Style)
         if (UseCustomColors?):

@@ -28,3 +28,14 @@ Output RGB → `MP_EmissiveColor`, alpha → `MP_Opacity`. `recompile` raises if
 - **Clip gloss/highlights to the shape** (`cov(d + inset)`), otherwise they poke outside the outline on big shapes.
 - Rotate text together with its background (draw upright, then rotate the image), never rotate only the shape.
 - Bake all static text (Arial Black + thick stroke looks very Roblox). Generate a 1920×1080 mockup first (`mock_layout.py`).
+
+## Portable materials (assets you give away)
+- Package paths contain the project mount, so material → texture / MPC / parent references break in another project.
+  Build the shipped materials without them (`examples/boo-board/tools/build_materials.py`, default build):
+  texture-parameter defaults = engine textures UEFN allows, no CollectionParameter; set the real textures from Verse
+  (`set M.Mask = T_BB_Header_0`) on instances Verse creates (`M_BB_Card{}`).
+- Allowed defaults: `/Engine/Functions/Engine_MaterialFunctions02/ExampleContent/Greyscale` (TC_Masks → `SAMPLERTYPE_Masks`),
+  `/Engine/Functions/Engine_MaterialFunctions02/ExampleContent/DebugNumberStrip` (sRGB → `SAMPLERTYPE_Color`).
+  Refused by validation: anything in `/Engine/EngineResources` and `/Engine/EngineMaterials`.
+- Mesh default slots: `/Engine/BasicShapes/BasicShapeMaterial` (`mesh.set_material`), never project MIs.
+

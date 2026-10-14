@@ -22,7 +22,7 @@ FONT_BLACK = os.path.join(FONTS, "Montserrat-Black.otf")      # SIL Open Font Li
 FONT_ROUND = os.path.join(FONTS, "Poppins-Black.ttf")         # SIL Open Font License
 
 HEADLINES = ["ENJOYING THE MAP?", "HAVING FUN?", "HAPPY HALLOWEEN!", "SUPPORT THIS MAP", "SPOOKY GOOD TIME?"]
-THANKS = [("THANKS,", "BOO!"), ("THANK", "YOU!"), ("YOU", "ROCK!"), ("SPOOK-", "TACULAR!")]
+THANKS = [("THANKS,", "BOO!"), ("THANK", "YOU!"), ("YOU", "ROCK!"), ("SPOOK-", "TACULAR!"), ("STAY", "SPOOKY!")]
 
 
 # ------------------------------------------------------------------ SDF canvas

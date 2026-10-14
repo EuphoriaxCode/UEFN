@@ -63,6 +63,8 @@ Details + evidence live in `topics/`. **If a rule here conflicts with your insti
 - `ObjectPositionWS` = centre of the mesh **bounds**, not its pivot → use `TransformPosition` Local→World of (0,0,0).
   Verse `color` → material vector param can't carry world-size numbers (clamped) → use scalar params.
 - Never give two material parameters the same name (they share one value). Particle quads: keep UV.x inside (i, i+1).
+- A TextureSampleParameter2D default must match its sampler type (`Masks` ↔ TC_Masks texture, `Color` ↔ sRGB) or the
+  material doesn't compile. Defaults that UEFN validation accepts: see §9b.
 - Continuous/looping animation of world props: drive it with WPO + `Time` in the material (client-smooth, in sync, free);
   `LocalPosition` in WPO is the undeformed vertex position (see `topics/animation.md`).
 
@@ -92,6 +94,9 @@ Details + evidence live in `topics/`. **If a rule here conflicts with your insti
 - `StartSession` can block > 10 min → run it in the background and watch `%LOCALAPPDATA%\UnrealEditorFortnite\Saved\Logs\UnrealEditorFortnite.log`
   (`Session -> Channel State`, `LogVerse`). Server-side Verse `Print` DOES appear in that editor log as `LogVerse:`.
 - `StopSession` can report `Disconnected` while the toolbar still shows a running game → check `GetSessionStatus` before `StartSession`.
+- `StartSession(location, rotation)` = Play From Here. "Validation failed" → read the `UEFNValidation:` lines in the log:
+  disallowed engine references (§9b), a missing Island Settings device, or no network at editor start (`invalid_region`).
+- Record the client with `scripts/windows/record_window.ps1 -Process FortniteClient-Win64-Shipping` (frames + timestamps).
 
 ## 8. Scene Graph (details: `topics/scene-graph.md`)
 - **No tool creates prefabs** → the human does Outliner → right-click entity → Create Prefab. Plan the work so this is one early step.
@@ -128,6 +133,20 @@ Details + evidence live in `topics/`. **If a rule here conflicts with your insti
 - `VerseToolset.ListFiles` requires `bRecursive`. The project's Verse root is `/<plugin-guid>` (from `ListFiles("")`).
 - Each MCP call costs ~1 editor frame; a background (unfocused) editor runs ~3 FPS → ~330 ms per call. Batch big builds with
   `uefn sg build` (one `execute_tool_script` round-trip).
+
+- `CaptureViewport` honours camera roll: roll 90 + rotate the PNG −90° = a portrait frame (Shorts) at full viewport height.
+
+## 9b. Shipping a pack to other creators (details: `experiments/LOG.md` E33–E35)
+- A `.uasset` references other assets by full package path, which contains the PROJECT mount (`/<uplugin name>/…`,
+  a GUID or the project name). A copied folder only works in another project if its assets reference nothing inside
+  the project: let Verse create the material instances and set the textures at runtime; texture-parameter defaults =
+  allowed engine textures; mesh slots = `/Engine/BasicShapes/BasicShapeMaterial`; don't ship MIs or MPCs.
+- UEFN validation REFUSES `/Engine/EngineResources/*` and `/Engine/EngineMaterials/*` (DefaultMaterial, WhiteSquareTexture,
+  DefaultDiffuse_TC_Masks). Accepted: `/Engine/Functions/Engine_MaterialFunctions02/ExampleContent/Greyscale` (masks),
+  `…/ExampleContent/DebugNumberStrip` (colour), `/Engine/BasicShapes/BasicShapeMaterial`.
+- Validate before shipping: start a session (validation runs first, ~1 s), then copy the folder elsewhere and check
+  `get_dependencies` = only `/Engine` + `/Script`. Users drop the folder in Content via Explorer (not the Content Browser).
+- Textures/meshes store their import source path (your user and folder names) → neutralize it in the packager.
 
 ## 9. What the agent cannot do (don't burn time)
 - Create/edit prefab assets; link device references; drive the editor UI.

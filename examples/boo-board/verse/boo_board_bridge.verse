@@ -1,15 +1,56 @@
-# Boo Board: device transform (old /UnrealEngine.com/Temporary/SpatialMath) -> Scene Graph transform.
-# Kept in its own file: importing both SpatialMath modules makes vector3/rotation/transform ambiguous elsewhere.
+<#  
+    _____                                                                                                     _____ 
+   ( ___ )                                                                                                   ( ___ )
+    |   |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ DEVELOPED BY: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|   |
+    |   |     ______     __  __     ______    __  __     ______     ______     __     ______     __  __       |   |
+    |   |    /\  ___\   /\ \/\ \   /\  == \  /\ \_\ \   /\  __ \   /\  == \   /\ \   /\  __ \   /\_\_\_\      |   |
+    |   |    \ \  __\   \ \ \_\ \  \ \  _-/  \ \  __ \  \ \ \/\ \  \ \  __<   \ \ \  \ \  __ \  \/_/\_\/_     |   |
+    |   |     \ \_____\  \ \_____\  \ \_\     \ \_\ \_\  \ \_____\  \ \_\ \_\  \ \_\  \ \_\ \_\   /\_\/\_\    |   |
+    |   |      \/_____/   \/_____/   \/_/      \/_/\/_/   \/_____/   \/_/ /_/   \/_/   \/_/\/_/   \/_/\/_/    |   | 
+    |   |                                                                                                     |   | 
+    |___|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|___| 
+   (_____)                                                                                                   (_____)
+
+    _____                                                                                                     _____ 
+   ( ___ )                                                                                                   ( ___ )
+    |   |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ EUPHORIAX USAGE TERMS: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|   |
+    |   |                                                                                                     |   |
+    |   |  Copyright (c) 2026 Euphoriax. All rights reserved.                                                 |   |
+    |   |                                                                                                     |   |
+    |   |  This software, along with any associated materials, is provided as is and is the intellectual      |   |
+    |   |  property of Euphoriax, where applicable under existing laws.                                       |   |
+    |   |                                                                                                     |   |
+    |   |  Unauthorized replication, distribution, or modification of this Software without                   |   |
+    |   |  permission from Euphoriax is not permitted.                                                        |   |
+    |   |                                                                                                     |   |
+    |   |  USAGE AGREEMENT: By using this Software, you agree to respect the terms and intent outlined in     |   |
+    |   |  this notice.You may use, modify, and distribute the Software in                                    |   |
+    |   |  accordance with the terms outlined here or agreed upon separately with Euphoriax.                  |   |
+    |   |                                                                                                     |   |
+    |   |  If you have any questions regarding usage or permissions, please contact us.                       |   |
+    |   |                                                                                                     |   |
+    |   |  Thank you for respecting the work and intentions behind Euphoriax.                                 |   |
+    |   |                                                                                                     |   |
+    |   |  _____________________                                                                              |   |
+    |   |  discord.gg/euphoriax                                                                               |   |
+    |   |  youtube.com/@euphoriax_official                                                                    |   |
+    |   |  x.com/Euphoriax_Fn                                                                                 |   |
+    |   |  instagram.com/euphoriax_official                                                                   |   |
+    |   |                                                                                                     |   |
+    |___|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|___| 
+   (_____)                                                                                                   (_____)
+#>
 
 using { /Verse.org/SpatialMath }
 using { /UnrealEngine.com/Temporary/SpatialMath }
 using { /Fortnite.com/Devices }
 using { /Fortnite.com/Characters }
 
+# own file, both SpatialMath modules in one file clash
 BooBoardDeviceTransform<internal>(Device:creative_device)<transacts>:(/Verse.org/SpatialMath:)transform =
     FromTransform(Device.GetTransform())
 
-# Succeeds when any player's character is within Radius cm of the device (old SpatialMath: X/Y/Z).
+# is there a player close to the device
 BooBoardPlayerWithin<internal>(Device:creative_device, Radius:float)<transacts><decides>:void =
     C := Device.GetTransform().Translation
     var Found:logic = false

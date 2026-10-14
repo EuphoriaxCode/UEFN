@@ -349,3 +349,73 @@ C04 AddCamera succeeded; holding for 12 s  ...  camera released
   device is the ground point for every mount (No Mount: open bottom edge 20 cm above it).
 - ⚠️ Server-side Verse `Print` lines can reach the editor log **late and batched** (old session lines showed up hours
   later with one timestamp). Don't time things from the editor log; use client captures (HUD prints) instead.
+
+### E33 ❌→✅ Giving assets away: a plain folder copy breaks, unless the assets reference nothing (Boo Board v1.1.5)
+- A `.uasset` stores its references as full package paths: `/<project mount>/BooBoard/Materials/M_BB_Card`. The mount
+  is the project's `.uplugin` name — a GUID in new projects (`176d0aa3-….uplugin`), the project name in older ones
+  (`MyProject.uplugin`, also under `Plugins/<Name>/`). So the v1.1.4 "copy the BooBoard folder into Content" install was
+  broken in every other project: MI → parent material, material → texture defaults / MPC, mesh → slot MIs all dangle.
+  Verse is fine: `using { Meshes }` / `{ Materials }` / `{ Textures }` are relative to the .verse file.
+- ✅ Drop-in folder that works anywhere: the Verse device already creates every material instance and sets every
+  texture at runtime, so the shipped assets need NO references into the project:
+  materials built "portable" (texture-parameter defaults = allowed engine textures, see E34; no Material Parameter
+  Collection), every mesh slot = `/Engine/BasicShapes/BasicShapeMaterial`, MIs and the MPC not shipped.
+  Verified: the zip's folder copied unmodified to another path → 32/32 assets load, `get_dependencies` shows nothing
+  outside `/Engine`/`/Script`, 0 log errors; a play session renders every board (texts, buttons, ghost, candy, mounts).
+- `tools/package.py` refuses an asset whose bytes contain a path to ANOTHER existing asset of the project
+  (own path, own folder and stale names are fine).
+- Rejected alternative (works, users don't want it): an installer that rewrites the mount prefix inside the .uasset
+  bytes with a same-length string (folder name absorbs the difference). Same-length byte patches of package paths
+  (ASCII + UTF-16) load fine — verified with a patched copy whose MIs, textures, mesh slots and MPC all pointed at the
+  new folder.
+
+### E34 ❌→✅ UEFN validation only allows some engine assets
+- `StartSession` → "Validation failed". The log says why:
+  `UEFNValidation: Error: Disallowed reference to /Engine/EngineResources/WhiteSquareTexture…` and
+  `… illegally references: /Engine/EngineMaterials/DefaultMaterial (AssetValidator_AssetReferenceRestrictions)`.
+  Refused: `/Engine/EngineResources/*`, `/Engine/EngineMaterials/*` (DefaultMaterial, WhiteSquareTexture,
+  DefaultDiffuse_TC_Masks). Accepted (session started): `/Engine/Functions/Engine_MaterialFunctions02/ExampleContent/Greyscale`
+  (TC_Masks), `/Engine/Functions/Engine_MaterialFunctions02/ExampleContent/DebugNumberStrip` (sRGB TC_Default),
+  `/Engine/BasicShapes/BasicShapeMaterial`.
+- A TextureSampleParameter2D default must match its sampler type: `SAMPLERTYPE_Masks` ↔ a TC_Masks texture,
+  `SAMPLERTYPE_Color` ↔ sRGB TC_Default — check with `get_properties(["CompressionSettings","SRGB"])`.
+- Validation runs in ~1 s at the start of `StartSession`, so starting a session is the quickest validator.
+  "Validation failed" can also mean no network at editor start (`invalid_region`) — read the `UEFNValidation` lines.
+- After a failed start MCP calls can hang (modal) → read `%LOCALAPPDATA%\UnrealEditorFortnite\Saved\Logs\UnrealEditorFortnite.log`
+  straight from disk.
+
+### E35 ⚠️ Shipped assets carry hidden metadata
+- Textures and meshes keep their import source in the Interchange `AssetImportData` JSON (UTF-16 FString):
+  `"RelativeFilename": "../../../../../../<your folders>/<repo>/examples/boo-board/art/…"`
+  — shown in UEFN as Source File (your user name and folder names). `package.py` swaps it for a same-length neutral path.
+- A renamed asset keeps its old name in the package name map (`T_BB_Header` inside `T_BB_Header_0`). It is not an
+  import; don't fail a byte scan on names of assets that don't exist.
+- `.uasset` files written into Content on disk while UEFN is open show up in the asset registry within seconds
+  (`find_assets`) → quick load tests; remove them with `AssetTools.delete(path)`.
+- Tool argument names that differ from the obvious: `AssetTools.exists(path)`, `list_folders(root_path, recursive)`;
+  `Texture2D.SizeX` is not readable through `get_properties`.
+
+### E36 ✅ Portrait renders and a session from MCP
+- `CaptureViewport` honours camera ROLL: roll 90 → the image is the viewport on its side; rotate it −90° → a portrait
+  frame (1267×1529 here) → 9:16 at 1.26× instead of a 2.3× crop of a landscape capture (`render_shots.py`, `roll: 90`).
+  The viewport panel size changes with the editor layout (1529×847 one day, 1529×1267 the next).
+- `SessionToolset.StartSession(location, rotation)` = Play From Here (spawns the player there); poll
+  `GetSessionStatus` = Connected and `GetGameState` = Running. Capture the client with
+  `scripts/windows/record_window.ps1 -Process FortniteClient-Win64-Shipping` (PrintWindow; writes frames + timestamps).
+- PrintWindow records ~12 fps at 2.5K: re-time with the logged timestamps (ffmpeg concat with durations) and
+  `minterpolate` to 30 fps (mci, aobmc, bidir) — clean on a static camera.
+- One Material Parameter Collection (GlobalFreeze/GlobalTime) = one write per frame for every board → ~0.3 s/frame
+  renders; it makes the materials non-portable, so it is only built with `build_materials.py --promo-clock`.
+
+### E37 ✅ Promo video pipeline v2 (`examples/boo-board/tools/compose2.py`, `promo2/storyboard*.json`)
+- One storyboard JSON per format (landscape 1920×1080, Shorts 1080×1920): segments (editor shots, in-game clip,
+  Recordly cut by source seconds), joins (cut / crossfade / brand transition), text overlays; renders with 12 workers
+  straight into ffmpeg (~1.5 min for 75 s).
+- Recordly zooms and pans with the cursor → for the vertical cut, track the Details panel per frame (the column where
+  the blue viewport ends) instead of a fixed crop.
+- Green-screen brand transition keyed by unmixing: alpha = 1 − (G − max(R,B)) / (key spill), colour =
+  (pixel − (1 − alpha)·key) / alpha → no green fringes on the anti-aliased edges.
+- Sound effects synthesized in numpy (`sfx.py`: whooshes from STFT-swept noise, hits, bells, bat flutter) — no samples,
+  no licences; cues follow the edit; ffmpeg `loudnorm` + `alimiter`. Measure peaks after the AAC encode (it overshoots).
+- Viewer feedback that shaped it: hook in the first 2 s (text readable on frame 1, action shots, board framed low so
+  the text never covers it), fewer decorations (no tags, bars, underlines: "looks AI").

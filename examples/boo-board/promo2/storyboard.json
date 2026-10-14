@@ -1,0 +1,423 @@
+{
+ "fps": 30,
+ "fade_in": 0,
+ "fade_out": 20,
+ "accent": [
+  255,
+  138,
+  36
+ ],
+ "logo_white": "C:/Aeon.Bonjé/Euphoriax/Logos/wit.png",
+ "logo_black": "C:/Aeon.Bonjé/Euphoriax/Logos/Zwart.png",
+ "transition": {
+  "file": "C:/Aeon.Bonjé/Euphoriax/Logos/Transition Euphoriax.mp4",
+  "logo": "white",
+  "darken": 0.35
+ },
+ "recordly": "C:/Aeon.Bonjé/Euphoriax/BooBoard_Release/promo_src/recordly_settings.mp4",
+ "_doc": [
+  "Storyboard. Edit and run:  py -3.14 tools/compose2.py promo2/<this file>   (add --sheet for a 1-frame-per-second check).",
+  "src: shot:<name> (editor renders), game (in-game clip), recordly (cut by t0/t1 = source seconds), black, white.",
+  "in/out = source frames, speed = playback speed, len = frames. join: cut | xfade:<frames> | euphoriax (brand transition + bats).",
+  "Text 'at' = [start, end] seconds from the segment start; 'overlays' at the top use seconds from the video start.",
+  "Text kinds: hook, caption (+sub), guide (tutorial subtitle), title, free, endcard."
+ ],
+ "output": "C:/Aeon.Bonjé/Euphoriax/BooBoard_Release/BooBoard_Promo_v2.mp4",
+ "size": [
+  1920,
+  1080
+ ],
+ "game": {
+  "dir": "%TEMP%/rec_game2",
+  "t0": 9.0,
+  "t1": 19.8,
+  "crop": [
+   92,
+   184,
+   2084,
+   1305
+  ]
+ },
+ "overlays": [
+  {
+   "kind": "hook",
+   "at": [
+    0.0,
+    3.15
+   ],
+   "line1": "Every UEFN map needs this for Halloween",
+   "line2": "and it's FREE",
+   "line2_at": 0.5,
+   "size": 76
+  },
+  {
+   "kind": "heading",
+   "span": [
+    "mountA",
+    "mountE"
+   ],
+   "text": "The different mounts"
+  }
+ ],
+ "segments": [
+  {
+   "id": "hook1",
+   "src": "shot:hookL_thanks",
+   "in": 3,
+   "out": 26
+  },
+  {
+   "id": "hook2",
+   "src": "shot:hookL_like",
+   "in": 1,
+   "out": 24
+  },
+  {
+   "id": "hook3",
+   "src": "shot:hookL_rock",
+   "in": 3,
+   "out": 26
+  },
+  {
+   "id": "hook4",
+   "src": "shot:hookL_follow",
+   "in": 2,
+   "out": 25
+  },
+  {
+   "id": "row",
+   "src": "shot:row_intro",
+   "in": 150,
+   "out": 269,
+   "join": "cut",
+   "text": [
+    {
+     "kind": "caption",
+     "at": [
+      0.3,
+      3.7
+     ],
+     "text": "5 styles. 5 mounts. 1 free device."
+    }
+   ]
+  },
+  {
+   "id": "styleA",
+   "src": "shot:close_A",
+   "in": 14,
+   "out": 49,
+   "join": "xfade:6",
+   "text": [
+    {
+     "kind": "caption",
+     "text": "Pumpkin Night"
+    }
+   ]
+  },
+  {
+   "id": "styleB",
+   "src": "shot:close_B",
+   "in": 14,
+   "out": 49,
+   "join": "cut",
+   "text": [
+    {
+     "kind": "caption",
+     "text": "Ghostly Mint"
+    }
+   ]
+  },
+  {
+   "id": "styleC",
+   "src": "shot:close_C",
+   "in": 14,
+   "out": 49,
+   "join": "cut",
+   "text": [
+    {
+     "kind": "caption",
+     "text": "Witch Brew"
+    }
+   ]
+  },
+  {
+   "id": "styleD",
+   "src": "shot:close_D",
+   "in": 14,
+   "out": 49,
+   "join": "cut",
+   "text": [
+    {
+     "kind": "caption",
+     "text": "Blood Moon"
+    }
+   ]
+  },
+  {
+   "id": "styleE",
+   "src": "shot:close_E",
+   "in": 14,
+   "out": 49,
+   "join": "cut",
+   "text": [
+    {
+     "kind": "caption",
+     "text": "Candy Pop"
+    }
+   ]
+  },
+  {
+   "id": "ingame",
+   "src": "game",
+   "in": 90,
+   "out": 285,
+   "join": "xfade:8",
+   "zoom": [
+    1.0,
+    1.04
+   ],
+   "text": [
+    {
+     "kind": "caption",
+     "at": [
+      0.3,
+      9.0
+     ],
+     "text": "Works in-game, for every player"
+    }
+   ]
+  },
+  {
+   "id": "title",
+   "src": "shot:row_outro",
+   "in": 0,
+   "speed": 0.4,
+   "len": 96,
+   "join": "euphoriax",
+   "blur": 10,
+   "dim": 0.62,
+   "watermark": false,
+   "text": [
+    {
+     "kind": "title",
+     "title": "BOO BOARD",
+     "sub": "Free Halloween Like · Save · Follow sign for UEFN"
+    }
+   ]
+  },
+  {
+   "id": "settings",
+   "src": "recordly",
+   "t0": 8.0,
+   "t1": 42.9,
+   "join": "xfade:10",
+   "watermark": false,
+   "text": [
+    {
+     "kind": "guide",
+     "at": [
+      0.3,
+      5.2
+     ],
+     "text": "Drag the Boo Board device into your map"
+    },
+    {
+     "kind": "guide",
+     "at": [
+      5.5,
+      9.8
+     ],
+     "text": "Select it: every option is in the Details panel"
+    },
+    {
+     "kind": "guide",
+     "at": [
+      10.0,
+      13.8
+     ],
+     "text": "Pick one of 5 styles"
+    },
+    {
+     "kind": "guide",
+     "at": [
+      14.0,
+      17.3
+     ],
+     "text": "Choose the top text"
+    },
+    {
+     "kind": "guide",
+     "at": [
+      17.5,
+      21.0
+     ],
+     "text": "Change the size and animation speed"
+    },
+    {
+     "kind": "guide",
+     "at": [
+      21.3,
+      25.3
+     ],
+     "text": "Pick a mount, then tune the chain and sway"
+    },
+    {
+     "kind": "guide",
+     "at": [
+      25.5,
+      29.3
+     ],
+     "text": "Turn effects on or off, or use your own colors"
+    },
+    {
+     "kind": "guide",
+     "at": [
+      31.5,
+      34.8
+     ],
+     "text": "Play it only when a player walks up"
+    }
+   ]
+  },
+  {
+   "id": "mountA",
+   "src": "shot:mount_A",
+   "in": 0,
+   "out": 59,
+   "zoom": [
+    1.12,
+    1.26
+   ],
+   "focus": [
+    0.46,
+    0.53
+   ],
+   "join": "xfade:10",
+   "text": [
+    {
+     "kind": "caption",
+     "text": "Graveyard Arch"
+    }
+   ]
+  },
+  {
+   "id": "mountB",
+   "src": "shot:mount_B",
+   "in": 0,
+   "out": 59,
+   "zoom": [
+    1.12,
+    1.26
+   ],
+   "focus": [
+    0.46,
+    0.53
+   ],
+   "join": "xfade:5",
+   "text": [
+    {
+     "kind": "caption",
+     "text": "Lantern Post"
+    }
+   ]
+  },
+  {
+   "id": "mountC",
+   "src": "shot:mount_C",
+   "in": 0,
+   "out": 59,
+   "zoom": [
+    1.12,
+    1.26
+   ],
+   "focus": [
+    0.46,
+    0.53
+   ],
+   "join": "xfade:5",
+   "text": [
+    {
+     "kind": "caption",
+     "text": "Spider Thread"
+    }
+   ]
+  },
+  {
+   "id": "mountD",
+   "src": "shot:mount_D",
+   "in": 0,
+   "out": 59,
+   "zoom": [
+    1.12,
+    1.26
+   ],
+   "focus": [
+    0.46,
+    0.53
+   ],
+   "join": "xfade:5",
+   "text": [
+    {
+     "kind": "caption",
+     "text": "Floating Magic"
+    }
+   ]
+  },
+  {
+   "id": "mountE",
+   "src": "shot:mount_E",
+   "in": 0,
+   "out": 59,
+   "zoom": [
+    1.12,
+    1.26
+   ],
+   "focus": [
+    0.46,
+    0.53
+   ],
+   "join": "xfade:5",
+   "text": [
+    {
+     "kind": "caption",
+     "text": "No Mount"
+    }
+   ]
+  },
+  {
+   "id": "free",
+   "src": "shot:row_outro",
+   "in": 0,
+   "out": 149,
+   "speed": 0.8,
+   "join": "xfade:10",
+   "dim": 0.35,
+   "text": [
+    {
+     "kind": "free",
+     "at": [
+      0.3,
+      6.5
+     ],
+     "big": "FREE CODE",
+     "line": "in the Discord",
+     "size": 200
+    }
+   ]
+  },
+  {
+   "id": "end",
+   "src": "white",
+   "len": 90,
+   "join": "euphoriax",
+   "watermark": false,
+   "text": [
+    {
+     "kind": "endcard",
+     "name": "EUPHORIAX",
+     "line": "Follow for more free UEFN systems"
+    }
+   ]
+  }
+ ]
+}
