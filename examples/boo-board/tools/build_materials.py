@@ -1,7 +1,11 @@
 """Build the Boo Board master materials (all animation lives here, evaluated on the client every frame).
 
-    py -3.14 build_materials.py            # all
-    py -3.14 build_materials.py Ghost      # one (name without M_BB_)
+    py -3.14 build_materials.py                  # all (portable: the release build)
+    py -3.14 build_materials.py Ghost            # one (name without M_BB_)
+    py -3.14 build_materials.py --promo-clock    # + MPC_BB_Clock, only for frame-exact promo renders
+
+Portable = the materials reference nothing inside the project (texture defaults are engine textures, no MPC), so the
+BooBoard folder works when it is simply copied into another project's Content. Verse sets every texture at runtime.
 
 Shared conventions
 - tau = loop time in seconds: frac((Time * Speed + Phase) / PERIOD) * PERIOD. Every board part reads the same tau,
@@ -15,8 +19,8 @@ import board as B
 from matgraph import Graph
 
 ROOT = "/176d0aa3-082b-479b-b3f0-d5ac722fe133"
-MATS = ROOT + "/BooBoard/Materials"
-TEX = ROOT + "/BooBoard/Textures"
+MATS = ROOT + "/BooBoard/BB_Materials"
+TEX = ROOT + "/BooBoard/BB_Textures"
 TL = "1 Timeline"
 LOOK = "2 Look"
 MOVE = "3 Board Motion"
@@ -27,14 +31,33 @@ C1 = 1.70158
 C3 = C1 + 1.0
 
 
-def tex(name):
+PORTABLE = "--promo-clock" not in sys.argv
+ENGINE_MASKS = "/Engine/Functions/Engine_MaterialFunctions02/ExampleContent/Greyscale.Greyscale"
+ENGINE_COLOR = "/Engine/Functions/Engine_MaterialFunctions02/ExampleContent/DebugNumberStrip.DebugNumberStrip"
+
+
+def tex(name, masks=True):
+    """Texture parameter default: an engine texture of the same compression in the portable build."""
+    if PORTABLE:
+        return ENGINE_MASKS if masks else ENGINE_COLOR
     return f"{TEX}/{name}.{name}"
 
 
 # ------------------------------------------------------------------ shared building blocks
+MPC = ROOT + "/BooBoard/BB_Materials/MPC_BB_Clock.MPC_BB_Clock"
+
+
+def mpc(g, name):
+    return g.node("CollectionParameter", {"collection": {"refPath": MPC}, "parameterName": name})
+
+
 def now(g):
-    """Material time. FreezeTime = 1 replaces the engine clock with FrozenTime (frame-exact video renders)."""
-    return g.scalar("FreezeTime", 0.0, TL, 8).lerp(g.time(), g.scalar("FrozenTime", 0.0, TL, 9))
+    """Material time. FreezeTime = 1 (per instance) or GlobalFreeze = 1 (MPC_BB_Clock, every board at once) replace the
+    engine clock with FrozenTime / GlobalTime — frame-exact video renders with one parameter write per frame."""
+    local = g.scalar("FreezeTime", 0.0, TL, 8).lerp(g.time(), g.scalar("FrozenTime", 0.0, TL, 9))
+    if PORTABLE:
+        return local
+    return mpc(g, "GlobalFreeze").lerp(local, mpc(g, "GlobalTime"))
 
 
 def clock_mode(g):
@@ -352,7 +375,7 @@ def m_burst():
     col = (cell / 4.0).frac() * 4.0
     row = (cell / 4.0).floor()
     auv = (col + lu).append(row + lv) / 4.0
-    t = g.texture("Atlas", tex("T_BB_Sprites"), auv, "SAMPLERTYPE_Color", LOOK)
+    t = g.texture("Atlas", tex("T_BB_Sprites", masks=False), auv, "SAMPLERTYPE_Color", LOOK)
     rgb, a = t.at("RGB"), t.at("A")
     finish_lit(g, rgb, rgb * g.scalar("Glow", 0.9, LOOK, 2), 0.5, 0.0, a)
     return g
@@ -386,7 +409,7 @@ def m_bats():
     col = (cell / 4.0).frac() * 4.0
     row = (cell / 4.0).floor()
     auv = (col + lu).append(row + lv) / 4.0
-    tx = g.texture("Atlas", tex("T_BB_Sprites"), auv, "SAMPLERTYPE_Color", LOOK)
+    tx = g.texture("Atlas", tex("T_BB_Sprites", masks=False), auv, "SAMPLERTYPE_Color", LOOK)
     rgb, al = tx.at("RGB"), tx.at("A")
     finish_lit(g, rgb, rgb * g.scalar("Glow", 0.5, LOOK, 0), 0.6, 0.0, al)
     return g
@@ -440,7 +463,7 @@ ALL = {"Mount": m_mount, "Panel": m_panel, "Card": m_card, "Button": m_button, "
 
 if __name__ == "__main__":
     import json
-    names = sys.argv[1:] or list(ALL)
+    names = [a for a in sys.argv[1:] if not a.startswith("--")] or list(ALL)
     for n in names:
         g = ALL[n]()
         print(n, len(g.order), "nodes")

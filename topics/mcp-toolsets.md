@@ -46,3 +46,11 @@
 The editor serves streamable-HTTP MCP at `http://127.0.0.1:8000/mcp`: POST `initialize`, keep the `Mcp-Session-Id` header,
 then `tools/call` → `call_tool {toolset_name, tool_name, arguments}`. Minimal client: `examples/lamp-showroom/tools/mcp.py`.
 `CaptureViewport` / `CaptureEditorImage` return the PNG as a separate `image` content item (not inside the JSON text).
+
+## Argument names and outputs that surprised us
+- `AssetTools.exists(path)`, `list_folders(root_path, recursive)`, `get_dependencies(asset_path)` (asset-registry
+  dependencies; use it to prove a folder references nothing inside the project).
+- `ObjectTools.get_properties` can't read `Texture2D.SizeX`; `CompressionSettings` and `SRGB` work.
+- `EditorAppToolset.CaptureViewport(captureTransform)` uses the rotation's roll → portrait captures.
+- `SessionToolset.StartSession(location, rotation)` = Play From Here; validation errors are only in the editor log.
+

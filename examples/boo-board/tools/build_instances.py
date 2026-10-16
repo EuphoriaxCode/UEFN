@@ -10,9 +10,9 @@ from matgraph import api
 
 ROOT = "/176d0aa3-082b-479b-b3f0-d5ac722fe133"
 BB = ROOT + "/BooBoard"
-MATS = BB + "/Materials"
+MATS = BB + "/BB_Materials"
 INST = MATS + "/Instances"
-TEX = BB + "/Textures"
+TEX = BB + "/BB_Textures"
 
 ORANGE = (0.95, 0.24, 0.01)
 PURPLE = (0.42, 0.06, 0.95)
@@ -104,7 +104,7 @@ def make(slot):
 
 def main():
     only = sys.argv[1:]
-    mesh = ref(BB + "/Meshes", "SM_BB_Board")
+    mesh = ref(BB + "/BB_Meshes", "SM_BB_Board")
     for slot in SLOTS:
         if only and slot not in only:
             continue
@@ -114,7 +114,7 @@ def main():
     for mname, slots in MESH_SLOTS.items():
         if only and mname not in only:
             continue
-        mesh = ref(BB + "/Meshes", f"SM_BB_{mname}")
+        mesh = ref(BB + "/BB_Meshes", f"SM_BB_{mname}")
         for slot, mi_name in slots.items():
             mi = make(mi_name) if mi_name in MOUNT_SLOTS else ref(INST, f"MI_BB_{mi_name}")
             api.tool("mesh", "set_material", {"mesh": mesh, "slot_name": slot, "material": mi})

@@ -6,32 +6,47 @@ Pumpkins, bats, chains, candy rain, 5 colour styles, 4 mounts. One Verse device,
 
 ![Boo Board](promo/boo_board_still.jpg)
 
-Promo video (37 s, 1080p): rendered by `tools/promo.py` + `tools/compose.py` (not in git; it is in the release folder).
+Promo videos (YouTube 75 s + Shorts 39 s, with sound effects): `tools/compose2.py` + `promo2/storyboard*.json`
+(not in git; they are in the release folder). The first promo (37 s) came from `tools/promo.py` + `tools/compose.py`.
 
 **Why it's light:** every animation runs inside the materials on each player's own machine (World Position Offset +
 `Time`). The Verse device only builds the board once when the game starts — no ticking, no server cost, perfectly
 smooth at any frame rate, and every board on your island stays in sync (or not, your choice).
 
-## Install (2 minutes)
-1. Close UEFN. Copy the **`BooBoard`** folder into your project's **`Content`** folder
-   (`Documents\Fortnite Projects\<YourProject>\Plugins\<YourProject>\Content\` or wherever your project's Content lives).
+## Install (1 minute)
+1. Close UEFN. Put the **`BooBoard`** folder from `BooBoard_v<version>.zip` in your project's **`Content`** folder.
 2. Open your project. It needs **Scene Graph** enabled (Project Settings → Scene Graph).
 3. **Verse → Build Verse Code**.
-4. Content Browser → **All → `<YourProject>` → CreativeDevices / Verse devices → `boo_board_device`** → drag it into the level.
+4. Content Browser → `BooBoard` → **`boo_board_device`** → drag it into the level.
    The board + mount stand **exactly on the device** and face the same way as the device's screen — place the device
    where the sign should stand and aim the screen at your players. The device hides itself when the game starts.
 5. Pick a Style and a Mount in the Details panel → Launch Session. Done.
 
-> No Verse / no Scene Graph? Drag the static meshes `BooBoard/Meshes/SM_BB_Board` (+ `SM_BB_Arch` and two
-> `SM_BB_Chain`) straight into your level. They animate on their own with the Pumpkin Night look.
-> Positions for a matching arch: arch at (0,0,0), chains at Y ±130 / Z 506, board at Z 444.
+**Why a plain folder copy works:** a `.uasset` stores its references as full package paths
+(`/<project mount>/BooBoard/...`) and every UEFN project has its own mount, so assets that reference EACH OTHER break
+when copied into another project. The shipped assets therefore reference nothing inside the project:
+- materials (`build_materials.py`, default "portable" build): texture-parameter defaults are engine textures UEFN
+  allows (`/Engine/Functions/Engine_MaterialFunctions02/ExampleContent/Greyscale` for masks, `.../DebugNumberStrip`
+  for colour), no Material Parameter Collection;
+- meshes: every default slot is `/Engine/BasicShapes/BasicShapeMaterial`;
+- the Verse device creates every material instance and sets every texture at runtime, and reaches the assets through
+  qualified names in the relative modules `BB_Meshes`, `BB_Materials`, `BB_Textures` (`BB_Textures.T_BB_Sprites`).
+  The asset folders have unique names on purpose (since v1.1.6): with plain `Meshes` / `Materials` / `Textures`, a
+  folder of the same name in the buyer's Content root wins `using { Textures }` ("Unknown identifier") and makes
+  `Textures.T_BB_...` ambiguous, so the board would not compile (LOG E50, E52).
+
+UEFN validation refuses `/Engine/EngineResources/*` and `/Engine/EngineMaterials/*` (e.g. `DefaultMaterial`,
+`WhiteSquareTexture`, `DefaultDiffuse_TC_Masks`): "Disallowed reference … (AssetValidator_AssetReferenceRestrictions)"
+and the session will not start. `tools/package.py` refuses to ship an asset that points at another asset of the
+project. Verified: the zip's folder, copied unmodified to another path, loads all 32 assets with zero project
+dependencies, and a play session renders every board correctly.
 
 ## Details panel
 | Group | Setting | What it does |
 |---|---|---|
 | 1 Board | **Style** | Pumpkin Night · Ghostly Mint · Witch Brew · Blood Moon · Candy Pop |
 | | **Headline** | ENJOYING THE MAP? · HAVING FUN? · HAPPY HALLOWEEN! · SUPPORT THIS MAP · SPOOKY GOOD TIME? |
-| | **Thanks Message** | THANKS, BOO! · THANK YOU! · YOU ROCK! · SPOOKTACULAR! |
+| | **Thanks Message** | THANKS, BOO! · THANK YOU! · YOU ROCK! · SPOOKTACULAR! · STAY SPOOKY! |
 | | **Board Scale** | 0.4 – 3 (1 ≈ a 5.5 m arch) |
 | | **Animation Speed** | 0.4 – 2.5 (1 = one show every 11 s) |
 | | **Sync All Boards** | on: every board plays together · off: each starts at a random moment |
@@ -68,12 +83,19 @@ Shows alternate forward/backward so the board never has to jump back.
 | `tools/build_meshes.py`, `tools/meshes.py` | bevelled extrusions, lathes, tubes → OBJ with one material slot per part |
 | `tools/art.py`, `tools/art_ui.py` | SDF-drawn textures (mask channels recoloured in the materials) |
 | `tools/matgraph.py` | material graphs as Python expressions, built in one `execute_tool_script` call |
-| `tools/build_materials.py` | the 8 master materials (Panel, Card, Button, Ghost, Burst, Bats, Pumpkin, Mount) |
-| `tools/build_instances.py` | material instances = defaults for the drop-in meshes |
+| `tools/build_materials.py` | the 8 master materials (Panel, Card, Button, Ghost, Burst, Bats, Pumpkin, Mount); portable by default, `--promo-clock` adds the MPC |
+| `tools/build_instances.py` | material instances as mesh defaults (editor previews only; NOT portable) |
+| `tools/portable_meshes.py` | every mesh slot → `BasicShapeMaterial` again (run before packaging) |
+| `tools/package.py` | release zip = drop-in `BooBoard/` folder + READ ME; refuses assets that reference the project |
 | `tools/gen_verse.py` | writes `verse/boo_board_layout.verse` from `board.py` |
 | `verse/boo_board_device.verse` | the device: Details panel, palettes, spawning, per-part material instances |
-| `tools/frames.py`, `tools/promo.py`, `tools/compose.py` | frame-exact promo renders (FreezeTime) + titles → MP4 |
+| `tools/frames.py`, `tools/promo.py`, `tools/compose.py` | first promo: frame-exact renders (FreezeTime) + titles → MP4 |
+| `tools/mirror.py`, `tools/editor_hide.py` | editor copies of the runtime boards (per-board mesh copies in `/BooPromo`) for renders |
+| `tools/render_shots.py`, `tools/clock.py`, `promo2/shots*.json` | frame-exact shots with one MPC write per frame; `roll: 90` = portrait |
+| `tools/compose2.py`, `tools/bats.py`, `tools/sfx.py`, `tools/thumb.py` | storyboard → MP4 (landscape + Shorts), brand transition with bats, synthesized SFX, Shorts thumbnail |
+| `verse/euphoriax_header.txt` | Euphoriax header on every Verse file (`gen_verse.py` adds it to the layout file) |
 | `verse/test/` | test-only device that moves the player in front of the board (not part of the release) |
 
-Rebuild everything: `art.py` → `build_meshes.py` → `import_assets.py all` → `build_materials.py` → `build_instances.py`
-→ `gen_verse.py` → push the `verse/*.verse` files → Build Verse. Lessons: `experiments/LOG.md` E24–E27.
+Rebuild everything: `art.py` → `build_meshes.py` → `import_assets.py all` → `build_materials.py` → `portable_meshes.py`
+→ `gen_verse.py` → push the `verse/*.verse` files → Build Verse → start a session (validation) → `package.py`.
+Lessons: `experiments/LOG.md` E24–E37, E52.

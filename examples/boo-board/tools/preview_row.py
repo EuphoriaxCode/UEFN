@@ -7,7 +7,7 @@ from uefncli import sg
 
 ROOT_AT = (-2000.0, 1500.0, 0.0)
 GAP = 1400.0
-M = "BooBoard-Meshes-"
+M = "BooBoard-BB_Meshes-"
 hang = 70.0
 hook_z = B.BEAM_Z - B.HOOK_DROP
 board_up = hook_z - hang + abs(B.top_z(B.HOOK_S))

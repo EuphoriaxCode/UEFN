@@ -1,0 +1,345 @@
+{
+ "fps": 30,
+ "fade_in": 0,
+ "fade_out": 20,
+ "accent": [
+  255,
+  138,
+  36
+ ],
+ "logo_white": "C:/Aeon.Bonjé/Euphoriax/Logos/wit.png",
+ "logo_black": "C:/Aeon.Bonjé/Euphoriax/Logos/Zwart.png",
+ "transition": {
+  "file": "C:/Aeon.Bonjé/Euphoriax/Logos/Transition Euphoriax.mp4",
+  "logo": "white",
+  "darken": 0.35
+ },
+ "recordly": "C:/Aeon.Bonjé/Euphoriax/BooBoard_Release/promo_src/recordly_settings.mp4",
+ "_doc": [
+  "Storyboard. Edit and run:  py -3.14 tools/compose2.py promo2/<this file>   (add --sheet for a 1-frame-per-second check).",
+  "src: shot:<name> (editor renders), game (in-game clip), recordly (cut by t0/t1 = source seconds), black, white.",
+  "in/out = source frames, speed = playback speed, len = frames. join: cut | xfade:<frames> | euphoriax (brand transition + bats).",
+  "Text 'at' = [start, end] seconds from the segment start; 'overlays' at the top use seconds from the video start.",
+  "Text kinds: hook, caption (+sub), guide (tutorial subtitle), title, free, endcard."
+ ],
+ "output": "C:/Aeon.Bonjé/Euphoriax/BooBoard_Release/BooBoard_Promo_v2_Shorts.mp4",
+ "size": [
+  1080,
+  1920
+ ],
+ "game": {
+  "dir": "%TEMP%/rec_game2",
+  "t0": 9.0,
+  "t1": 19.8,
+  "crop": [
+   1015,
+   8,
+   1878,
+   1542
+  ]
+ },
+ "overlays": [
+  {
+   "kind": "hook",
+   "at": [
+    0.0,
+    3.15
+   ],
+   "line1": "Every UEFN map\nneeds this\nfor Halloween",
+   "line2": "and it's FREE",
+   "line2_at": 0.5,
+   "size": 88
+  }
+ ],
+ "segments": [
+  {
+   "id": "hook1",
+   "src": "shot:hookV_thanks",
+   "in": 3,
+   "out": 26
+  },
+  {
+   "id": "hook2",
+   "src": "shot:hookV_like",
+   "in": 1,
+   "out": 24
+  },
+  {
+   "id": "hook3",
+   "src": "shot:hookV_rock",
+   "in": 3,
+   "out": 26
+  },
+  {
+   "id": "hook4",
+   "src": "shot:hookV_follow",
+   "in": 2,
+   "out": 25
+  },
+  {
+   "id": "vA",
+   "src": "shot:vclose_A",
+   "in": 6,
+   "out": 47,
+   "join": "cut",
+   "text": [
+    {
+     "kind": "caption",
+     "text": "Pumpkin Night",
+     "sub": "Graveyard Arch"
+    }
+   ]
+  },
+  {
+   "id": "vB",
+   "src": "shot:vclose_B",
+   "in": 6,
+   "out": 47,
+   "join": "cut",
+   "text": [
+    {
+     "kind": "caption",
+     "text": "Ghostly Mint",
+     "sub": "Lantern Post"
+    }
+   ]
+  },
+  {
+   "id": "vC",
+   "src": "shot:vclose_C",
+   "in": 6,
+   "out": 47,
+   "join": "cut",
+   "text": [
+    {
+     "kind": "caption",
+     "text": "Witch Brew",
+     "sub": "Spider Thread"
+    }
+   ]
+  },
+  {
+   "id": "vD",
+   "src": "shot:vclose_D",
+   "in": 6,
+   "out": 47,
+   "join": "cut",
+   "text": [
+    {
+     "kind": "caption",
+     "text": "Blood Moon",
+     "sub": "Floating Magic"
+    }
+   ]
+  },
+  {
+   "id": "vE",
+   "src": "shot:vclose_E",
+   "in": 6,
+   "out": 47,
+   "join": "cut",
+   "text": [
+    {
+     "kind": "caption",
+     "text": "Candy Pop",
+     "sub": "No Mount"
+    }
+   ]
+  },
+  {
+   "id": "ingame",
+   "src": "game",
+   "in": 90,
+   "out": 255,
+   "join": "xfade:6",
+   "zoom": [
+    1.0,
+    1.04
+   ],
+   "text": [
+    {
+     "kind": "caption",
+     "at": [
+      0.3,
+      5.5
+     ],
+     "text": "Works in-game"
+    }
+   ]
+  },
+  {
+   "id": "title",
+   "src": "shot:vclose_C",
+   "in": 0,
+   "speed": 0.5,
+   "len": 75,
+   "join": "euphoriax",
+   "blur": 10,
+   "dim": 0.62,
+   "watermark": false,
+   "text": [
+    {
+     "kind": "title",
+     "title": "BOO BOARD",
+     "sub": "Free Like · Save · Follow sign for UEFN"
+    }
+   ]
+  },
+  {
+   "id": "set0",
+   "src": "recordly",
+   "t0": 11.9,
+   "t1": 13.5,
+   "fit": "band",
+   "band_dy": 120,
+   "watermark": false,
+   "join": "xfade:8",
+   "text": [
+    {
+     "kind": "guide",
+     "at": [
+      0.2,
+      1.5999999999999996
+     ],
+     "text": "Drag the device into your map"
+    }
+   ]
+  },
+  {
+   "id": "set1",
+   "src": "recordly",
+   "t0": 21.3,
+   "t1": 23.2,
+   "fit": "track",
+   "band_dy": 120,
+   "watermark": false,
+   "join": "cut",
+   "text": [
+    {
+     "kind": "guide",
+     "at": [
+      0.0,
+      1.8999999999999986
+     ],
+     "text": "Pick a style"
+    }
+   ]
+  },
+  {
+   "id": "set2",
+   "src": "recordly",
+   "t0": 23.2,
+   "t1": 25.2,
+   "fit": "track",
+   "band_dy": 120,
+   "watermark": false,
+   "join": "cut",
+   "text": [
+    {
+     "kind": "guide",
+     "at": [
+      0.0,
+      2.0
+     ],
+     "text": "Choose the top text"
+    }
+   ]
+  },
+  {
+   "id": "set3",
+   "src": "recordly",
+   "t0": 29.1,
+   "t1": 33.3,
+   "fit": "track",
+   "band_dy": 120,
+   "watermark": false,
+   "join": "cut",
+   "text": [
+    {
+     "kind": "guide",
+     "at": [
+      0.0,
+      4.199999999999996
+     ],
+     "text": "Pick a mount, tune chain and sway"
+    }
+   ]
+  },
+  {
+   "id": "set4",
+   "src": "recordly",
+   "t0": 33.4,
+   "t1": 36.4,
+   "fit": "track",
+   "band_dy": 120,
+   "watermark": false,
+   "join": "cut",
+   "text": [
+    {
+     "kind": "guide",
+     "at": [
+      0.0,
+      3.0
+     ],
+     "text": "Effects on or off, or your own colors"
+    }
+   ]
+  },
+  {
+   "id": "set5",
+   "src": "recordly",
+   "t0": 40.05,
+   "t1": 41.95,
+   "fit": "track",
+   "band_dy": 120,
+   "watermark": false,
+   "join": "cut",
+   "text": [
+    {
+     "kind": "guide",
+     "at": [
+      0.0,
+      1.9000000000000057
+     ],
+     "text": "Play only when a player walks up"
+    }
+   ]
+  },
+  {
+   "id": "free",
+   "src": "shot:vclose_E",
+   "in": 0,
+   "speed": 0.4,
+   "len": 135,
+   "join": "xfade:8",
+   "dim": 0.45,
+   "text": [
+    {
+     "kind": "free",
+     "at": [
+      0.3,
+      4.0
+     ],
+     "big": "FREE CODE",
+     "line": "in the Discord",
+     "size": 140
+    }
+   ],
+   "blur": 10
+  },
+  {
+   "id": "end",
+   "src": "white",
+   "len": 75,
+   "join": "euphoriax",
+   "watermark": false,
+   "text": [
+    {
+     "kind": "endcard",
+     "name": "EUPHORIAX",
+     "line": "Follow for more free UEFN systems"
+    }
+   ]
+  }
+ ]
+}
