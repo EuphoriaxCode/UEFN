@@ -18,7 +18,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PROJECT = r"C:\Aeon.Bonjé\Euphoriax\UEFN Maps\LikeAndFavoriteHallow_Euphoriax"
 MOUNT = "/176d0aa3-082b-479b-b3f0-d5ac722fe133/"
 OUT = r"C:\Aeon.Bonjé\Euphoriax\BooBoard_Release"
-VERSION = "1.1.5"
+VERSION = "1.1.6"
 SKIP = ("Instances", "MPC_BB_Clock.uasset")
 # textures / meshes remember where they were imported from (Source File); ship a neutral path of the same length
 SOURCE_DIR = ("Aeon.Bonjé/Euphoriax/Github/UEFN-MCP-Guidelines/examples/boo-board/",
@@ -31,6 +31,7 @@ INSTALL
 1. Close UEFN.
 2. Put the "BooBoard" folder in the Content folder of your project
    (where your .umap is, e.g. Documents\Fortnite Projects\<YourProject>\Plugins\<YourProject>\Content).
+   Updating? Delete the old BooBoard folder first.
 3. Open your project > Verse > Build Verse Code.
 4. Drag "boo_board_device" from the BooBoard folder into your level.
    Point the screen of the device at your players, pick a Style and a Mount and Launch Session.

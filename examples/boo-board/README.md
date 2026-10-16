@@ -30,7 +30,10 @@ when copied into another project. The shipped assets therefore reference nothing
   for colour), no Material Parameter Collection;
 - meshes: every default slot is `/Engine/BasicShapes/BasicShapeMaterial`;
 - the Verse device creates every material instance and sets every texture at runtime, and reaches the assets through
-  the relative modules `Meshes`, `Materials`, `Textures`.
+  qualified names in the relative modules `BB_Meshes`, `BB_Materials`, `BB_Textures` (`BB_Textures.T_BB_Sprites`).
+  The asset folders have unique names on purpose (since v1.1.6): with plain `Meshes` / `Materials` / `Textures`, a
+  folder of the same name in the buyer's Content root wins `using { Textures }` ("Unknown identifier") and makes
+  `Textures.T_BB_...` ambiguous, so the board would not compile (LOG E50, E52).
 
 UEFN validation refuses `/Engine/EngineResources/*` and `/Engine/EngineMaterials/*` (e.g. `DefaultMaterial`,
 `WhiteSquareTexture`, `DefaultDiffuse_TC_Masks`): "Disallowed reference … (AssetValidator_AssetReferenceRestrictions)"
@@ -95,4 +98,4 @@ Shows alternate forward/backward so the board never has to jump back.
 
 Rebuild everything: `art.py` → `build_meshes.py` → `import_assets.py all` → `build_materials.py` → `portable_meshes.py`
 → `gen_verse.py` → push the `verse/*.verse` files → Build Verse → start a session (validation) → `package.py`.
-Lessons: `experiments/LOG.md` E24–E37.
+Lessons: `experiments/LOG.md` E24–E37, E52.

@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.join(HERE, "..", "..", "..", "cli"))
 from uefncli import api  # noqa: E402
 
 ROOT = "/176d0aa3-082b-479b-b3f0-d5ac722fe133"
-INST = ROOT + "/BooBoard/Materials/Instances"
+INST = ROOT + "/BooBoard/BB_Materials/Instances"
 MIS = ["Housing", "Trim", "Divider", "Header", "TopBar", "Avatar", "BtnMenu", "BtnLike", "BtnSave", "BtnFollow", "Thanks",
        "Ghost", "BurstLike", "BurstSave", "BurstFollow", "Candy", "Bats", "Pumpkins", "Wood", "Metal", "Glow", "Chain",
        "Silk", "Spider", "SpiderEyes"]

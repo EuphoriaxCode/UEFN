@@ -28,13 +28,13 @@ sys.path.insert(0, os.path.join(REPO, "cli"))
 from uefncli import api, sg  # noqa: E402
 
 ROOT = "/176d0aa3-082b-479b-b3f0-d5ac722fe133"
-MATS = ROOT + "/BooBoard/Materials"
+MATS = ROOT + "/BooBoard/BB_Materials"
 PROMO = ROOT + "/BooPromo"
 MIRROR = PROMO + "/Materials"
 PMESH = PROMO + "/Meshes"
-TEX = ROOT + "/BooBoard/Textures"
+TEX = ROOT + "/BooBoard/BB_Textures"
 M = "BooPromo-Meshes-"
-SRC = ROOT + "/BooBoard/Meshes"
+SRC = ROOT + "/BooBoard/BB_Meshes"
 PROPS = ["Style", "Headline", "ThanksMessage", "BoardScale", "AnimationSpeed", "SyncAllBoards", "Mount", "HangLength",
          "SwayAmount", "FloatHeight", "DistanceFromDevice", "ShowGhost", "ShowBats", "ShowPumpkins", "ShowCandyRain",
          "ShowBursts", "UseCustomColors", "BoardColor", "TrimColor", "TextColor", "LikeColor", "SaveColor",

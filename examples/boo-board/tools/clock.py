@@ -6,7 +6,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "cli"))
 from uefncli import api  # noqa: E402
 
-MPC = {"refPath": "/176d0aa3-082b-479b-b3f0-d5ac722fe133/BooBoard/Materials/MPC_BB_Clock.MPC_BB_Clock"}
+MPC = {"refPath": "/176d0aa3-082b-479b-b3f0-d5ac722fe133/BooBoard/BB_Materials/MPC_BB_Clock.MPC_BB_Clock"}
 
 
 def set_clock(freeze, t=0.0):

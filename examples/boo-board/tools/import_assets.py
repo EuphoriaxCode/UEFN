@@ -28,7 +28,7 @@ def import_texture(fname, only=None):
     name = os.path.splitext(fname)[0]
     if only and only not in name:
         return
-    folder = BB + "/Textures"
+    folder = BB + "/BB_Textures"
     p = f"{folder}/{name}"
     if exists(p):
         api.tool("asset", "delete", {"path": p})
@@ -44,7 +44,7 @@ def import_texture(fname, only=None):
 
 
 def import_mesh(sub, obj, name):
-    folder = BB + "/Meshes"
+    folder = BB + "/BB_Meshes"
     p = f"{folder}/{name}"
     if exists(p):
         # Remove level entities using it first. delete() may return False while the old object is still
@@ -70,7 +70,7 @@ def import_mesh(sub, obj, name):
 def main():
     what = sys.argv[1] if len(sys.argv) > 1 else "all"
     only = sys.argv[sys.argv.index("--only") + 1] if "--only" in sys.argv else None
-    for f in ("Meshes", "Materials", "Materials/Instances", "Textures"):
+    for f in ("BB_Meshes", "BB_Materials", "BB_Materials/Instances", "BB_Textures"):
         api.tool("asset", "create_folder", {"path": f"{BB}/{f}"})
     if what in ("textures", "all"):
         for f in sorted(os.listdir(ART)):

@@ -20,7 +20,7 @@ MAT = {"refPath": "/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial"}
 
 def main():
     for m in MESHES:
-        ref = f"{ROOT}/BooBoard/Meshes/{m}.{m}"
+        ref = f"{ROOT}/BooBoard/BB_Meshes/{m}.{m}"
         api.tool("asset", "load_asset", {"asset_path": ref})
         r = api.tool("object", "get_properties", {"instance": {"refPath": ref}, "properties": ["StaticMaterials"]})
         r = json.loads(r) if isinstance(r, str) else r

@@ -19,8 +19,8 @@ import board as B
 from matgraph import Graph
 
 ROOT = "/176d0aa3-082b-479b-b3f0-d5ac722fe133"
-MATS = ROOT + "/BooBoard/Materials"
-TEX = ROOT + "/BooBoard/Textures"
+MATS = ROOT + "/BooBoard/BB_Materials"
+TEX = ROOT + "/BooBoard/BB_Textures"
 TL = "1 Timeline"
 LOOK = "2 Look"
 MOVE = "3 Board Motion"
@@ -44,7 +44,7 @@ def tex(name, masks=True):
 
 
 # ------------------------------------------------------------------ shared building blocks
-MPC = ROOT + "/BooBoard/Materials/MPC_BB_Clock.MPC_BB_Clock"
+MPC = ROOT + "/BooBoard/BB_Materials/MPC_BB_Clock.MPC_BB_Clock"
 
 
 def mpc(g, name):

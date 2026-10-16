@@ -50,9 +50,9 @@ using { /Verse.org/Colors }
 using { /Verse.org/Random }
 using { /Verse.org/Assets }
 using { /UnrealEngine.com/BasicShapes }
-using { Meshes }
-using { Materials }
-using { Textures }
+# Keep this file in the BooBoard folder next to BB_Meshes, BB_Materials and BB_Textures (folders are Verse modules).
+# Their names are unique on purpose: if the project has its own Meshes / Materials / Textures folder in Content,
+# plain names would be ambiguous and the board would not compile.
 
 boo_style<public> := enum{PumpkinNight, GhostlyMint, WitchBrew, BloodMoon, CandyPop}
 boo_mount<public> := enum{GraveyardArch, LanternPost, SpiderThread, FloatingMagic, NoMount}
@@ -263,7 +263,7 @@ boo_board_device<public> := class(creative_device):
 
     SpawnBoard(Root:entity, Up:float, P:boo_palette, Motion:boo_motion):void =
         E := NewChild(Root, 0.0, Up)
-        M := SM_BB_Board{Entity := E}
+        M := BB_Meshes.SM_BB_Board{Entity := E}
         set M.Collidable = false
         E.AddComponents(array{M})
         Root.AddEntities(array{E})
@@ -280,23 +280,23 @@ boo_board_device<public> := class(creative_device):
         set M.Trim = PanelMat(Dim(P.Trim, 0.08), Dim(P.Trim, 0.08), color{}, P.Trim, 2.6, 0.0, 0.0, A)
         set M.Divider = PanelMat(Dim(P.Divider, 0.1), Dim(P.Divider, 0.1), color{}, P.Divider, 1.6, 1.0, 1.0, A)
         set M.Header = CardMat(HeadlineTexture(), P.HeaderText, P.HeaderOutline, P.HeaderAccent, 1.0, BB_HeaderCenterY, BB_HeaderZ, A)
-        Bar := CardMat(T_BB_TopBar, P.GlyphIdle, PillColor, color{}, 1.0, BB_TopBarCenterY, BB_TopBarZ, A)
+        Bar := CardMat(BB_Textures.T_BB_TopBar, P.GlyphIdle, PillColor, color{}, 1.0, BB_TopBarCenterY, BB_TopBarZ, A)
         set Bar.Shine = 0.0
         set Bar.Glow = 0.2
         set M.TopBar = Bar
-        Av := CardMat(T_BB_Avatar, color{R := 1.0, G := 1.0, B := 1.0}, color{R := 0.05, G := 0.22, B := 0.9}, color{R := 0.1, G := 0.85, B := 0.15}, 1.0, BB_AvatarCenterY, BB_AvatarZ, A)
+        Av := CardMat(BB_Textures.T_BB_Avatar, color{R := 1.0, G := 1.0, B := 1.0}, color{R := 0.05, G := 0.22, B := 0.9}, color{R := 0.1, G := 0.85, B := 0.15}, 1.0, BB_AvatarCenterY, BB_AvatarZ, A)
         set Av.Shine = 0.0
         set Av.Glow = 0.25
         set M.Avatar = Av
         set M.Thanks = CardMat(ThanksTexture(), P.ThanksText, P.ThanksOutline, P.ThanksAccent, 0.0, BB_ThanksCenterY, BB_ThanksZ, A)
-        Menu := ButtonMat(T_BB_Btn_Menu, -5.0, 99.0, BB_MenuClick, BB_CenterYMenu, P, P.Like, A)
+        Menu := ButtonMat(BB_Textures.T_BB_Btn_Menu, -5.0, 99.0, BB_MenuClick, BB_CenterYMenu, P, P.Like, A)
         set Menu.CenterZ = BB_MenuZ
         set Menu.OffTime = BB_MenuOff
         set Menu.IdleColor = PillColor
         set M.BtnMenu = Menu
-        set M.BtnLike = ButtonMat(T_BB_Btn_Like, BB_BtnInLike, BB_BtnOutLike, BB_ClickLike, BB_CenterYLike, P, P.Like, A)
-        set M.BtnSave = ButtonMat(T_BB_Btn_Save, BB_BtnInSave, BB_BtnOutSave, BB_ClickSave, BB_CenterYSave, P, P.Save, A)
-        set M.BtnFollow = ButtonMat(T_BB_Btn_Follow, BB_BtnInFollow, BB_BtnOutFollow, BB_ClickFollow, BB_CenterYFollow, P, P.Follow, A)
+        set M.BtnLike = ButtonMat(BB_Textures.T_BB_Btn_Like, BB_BtnInLike, BB_BtnOutLike, BB_ClickLike, BB_CenterYLike, P, P.Like, A)
+        set M.BtnSave = ButtonMat(BB_Textures.T_BB_Btn_Save, BB_BtnInSave, BB_BtnOutSave, BB_ClickSave, BB_CenterYSave, P, P.Save, A)
+        set M.BtnFollow = ButtonMat(BB_Textures.T_BB_Btn_Follow, BB_BtnInFollow, BB_BtnOutFollow, BB_ClickFollow, BB_CenterYFollow, P, P.Follow, A)
         set M.BurstLike = BurstMat(BB_ClickLike + 0.05, 0.0, ShowBursts, A)
         set M.BurstSave = BurstMat(BB_ClickSave + 0.05, 3.0, ShowBursts, A)
         set M.BurstFollow = BurstMat(BB_ClickFollow + 0.05, 6.0, ShowBursts, A)
@@ -337,7 +337,7 @@ boo_board_device<public> := class(creative_device):
 
     SpawnChain(Root:entity, Left:float, Up:float, ChainLen:float, P:boo_palette, A:boo_motion):void =
         E := NewChild(Root, Left, Up)
-        M := SM_BB_Chain{Entity := E}
+        M := BB_Meshes.SM_BB_Chain{Entity := E}
         set M.Collidable = false
         Mat := MountMat(Brighten(P.Metal, 1.2), 0.35, 0.9, 0.0, color{}, 0.0, A)
         set Mat.ChainLength = ChainLen
@@ -348,7 +348,7 @@ boo_board_device<public> := class(creative_device):
 
     SpawnArch(Root:entity, P:boo_palette):void =
         E := NewChild(Root, 0.0, 0.0)
-        M := SM_BB_Arch{Entity := E}
+        M := BB_Meshes.SM_BB_Arch{Entity := E}
         set M.Collidable = false
         Still := StillMotion()
         set M.Wood = MountMat(P.Wood, 0.7, 0.0, 0.6, color{}, 0.0, Still)
@@ -361,7 +361,7 @@ boo_board_device<public> := class(creative_device):
 
     SpawnLanternPost(Root:entity, P:boo_palette):void =
         E := NewChild(Root, 0.0, 0.0)
-        M := SM_BB_LanternPost{Entity := E}
+        M := BB_Meshes.SM_BB_LanternPost{Entity := E}
         set M.Collidable = false
         Still := StillMotion()
         set M.Wood = MountMat(P.Wood, 0.7, 0.0, 0.6, color{}, 0.0, Still)
@@ -374,7 +374,7 @@ boo_board_device<public> := class(creative_device):
 
     SpawnSpider(Root:entity, Up:float, P:boo_palette, A:boo_motion):void =
         E := NewChild(Root, 0.0, Up)
-        M := SM_BB_SpiderThread{Entity := E}
+        M := BB_Meshes.SM_BB_SpiderThread{Entity := E}
         set M.Collidable = false
         set M.Silk = MountMat(color{R := 0.8, G := 0.8, B := 0.85}, 0.5, 0.0, 0.0, color{R := 0.8, G := 0.8, B := 1.0}, 0.6, A)
         set M.Spider = MountMat(color{R := 0.03, G := 0.015, B := 0.05}, 0.3, 0.0, 0.0, color{}, 0.0, A)
@@ -384,7 +384,7 @@ boo_board_device<public> := class(creative_device):
 
     SpawnFloatRing(Root:entity, P:boo_palette):void =
         E := NewChild(Root, 0.0, 0.0)
-        M := SM_BB_FloatRing{Entity := E}
+        M := BB_Meshes.SM_BB_FloatRing{Entity := E}
         set M.Collidable = false
         set M.Glow = MountMat(Dim(P.Glow, 0.3), 0.3, 0.0, 0.0, P.Glow, 5.0, StillMotion())
         E.AddComponents(array{M})
@@ -404,8 +404,8 @@ boo_board_device<public> := class(creative_device):
 
     StillMotion():boo_motion = boo_motion{Speed := 1.0, Phase := 0.0, Sway := 0.0, PivotUp := 0.0, Bob := 0.0}
 
-    PanelMat(Top:color, Bottom:color, Rim:color, Emissive:color, Strength:float, DividerMode:float, RimOff:float, A:boo_motion):M_BB_Panel =
-        M := M_BB_Panel{}
+    PanelMat(Top:color, Bottom:color, Rim:color, Emissive:color, Strength:float, DividerMode:float, RimOff:float, A:boo_motion):BB_Materials.M_BB_Panel =
+        M := BB_Materials.M_BB_Panel{}
         set M.ColorTop = Top
         set M.ColorBottom = Bottom
         set M.RimColor = Rim
@@ -428,8 +428,8 @@ boo_board_device<public> := class(creative_device):
         set M.ClockAnchorZ = A.AnchorZ
         M
 
-    CardMat(Mask:texture, Fill:color, Outline:color, Accent:color, AlwaysOn:float, CenterY:float, CenterZ:float, A:boo_motion):M_BB_Card =
-        M := M_BB_Card{}
+    CardMat(Mask:texture, Fill:color, Outline:color, Accent:color, AlwaysOn:float, CenterY:float, CenterZ:float, A:boo_motion):BB_Materials.M_BB_Card =
+        M := BB_Materials.M_BB_Card{}
         set M.Mask = Mask
         set M.FillColor = Fill
         set M.OutlineColor = Outline
@@ -452,8 +452,8 @@ boo_board_device<public> := class(creative_device):
         set M.ClockAnchorZ = A.AnchorZ
         M
 
-    ButtonMat(Mask:texture, InT:float, OutT:float, ClickT:float, CenterY:float, P:boo_palette, Active:color, A:boo_motion):M_BB_Button =
-        M := M_BB_Button{}
+    ButtonMat(Mask:texture, InT:float, OutT:float, ClickT:float, CenterY:float, P:boo_palette, Active:color, A:boo_motion):BB_Materials.M_BB_Button =
+        M := BB_Materials.M_BB_Button{}
         set M.Mask = Mask
         set M.InTime = InT
         set M.OutTime = OutT
@@ -477,9 +477,9 @@ boo_board_device<public> := class(creative_device):
         set M.ClockAnchorZ = A.AnchorZ
         M
 
-    BurstMat(Trigger:float, SetStart:float, ShowIt:logic, A:boo_motion):M_BB_Burst =
-        M := M_BB_Burst{}
-        set M.Atlas = T_BB_Sprites
+    BurstMat(Trigger:float, SetStart:float, ShowIt:logic, A:boo_motion):BB_Materials.M_BB_Burst =
+        M := BB_Materials.M_BB_Burst{}
+        set M.Atlas = BB_Textures.T_BB_Sprites
         set M.TriggerTime = Trigger
         set M.SetStart = SetStart
         set M.SetCount = 3.0
@@ -499,9 +499,9 @@ boo_board_device<public> := class(creative_device):
         set M.Speed = A.Speed
         M
 
-    CandyMat(A:boo_motion):M_BB_Burst =
-        M := M_BB_Burst{}
-        set M.Atlas = T_BB_Sprites
+    CandyMat(A:boo_motion):BB_Materials.M_BB_Burst =
+        M := BB_Materials.M_BB_Burst{}
+        set M.Atlas = BB_Textures.T_BB_Sprites
         set M.TriggerTime = BB_RainStart
         set M.Delay = 1.5
         set M.Life = 1.7
@@ -525,8 +525,8 @@ boo_board_device<public> := class(creative_device):
         set M.Speed = A.Speed
         M
 
-    GhostMat(P:boo_palette, A:boo_motion):M_BB_Ghost =
-        M := M_BB_Ghost{}
+    GhostMat(P:boo_palette, A:boo_motion):BB_Materials.M_BB_Ghost =
+        M := BB_Materials.M_BB_Ghost{}
         set M.GlowColor = P.GhostGlow
         set M.Hide = if (ShowGhost?) then 0.0 else 1.0
         set M.Speed = A.Speed
@@ -540,9 +540,9 @@ boo_board_device<public> := class(creative_device):
         set M.ClockAnchorZ = A.AnchorZ
         M
 
-    BatsMat(A:boo_motion):M_BB_Bats =
-        M := M_BB_Bats{}
-        set M.Atlas = T_BB_Sprites
+    BatsMat(A:boo_motion):BB_Materials.M_BB_Bats =
+        M := BB_Materials.M_BB_Bats{}
+        set M.Atlas = BB_Textures.T_BB_Sprites
         set M.Hide = if (ShowBats?) then 0.0 else 1.0
         set M.SwayDegrees = A.Sway
         set M.PivotUp = A.PivotUp
@@ -553,9 +553,9 @@ boo_board_device<public> := class(creative_device):
         set M.ClockAnchorZ = A.AnchorZ
         M
 
-    PumpkinMat(P:boo_palette, ShowIt:logic, A:boo_motion):M_BB_Pumpkin =
-        M := M_BB_Pumpkin{}
-        set M.Face = T_BB_PumpkinFace
+    PumpkinMat(P:boo_palette, ShowIt:logic, A:boo_motion):BB_Materials.M_BB_Pumpkin =
+        M := BB_Materials.M_BB_Pumpkin{}
+        set M.Face = BB_Textures.T_BB_PumpkinFace
         set M.Color = P.Pumpkin
         set M.Hide = if (ShowIt?) then 0.0 else 1.0
         set M.SwayDegrees = A.Sway
@@ -567,8 +567,8 @@ boo_board_device<public> := class(creative_device):
         set M.ClockAnchorZ = A.AnchorZ
         M
 
-    MountMat(Base:color, Rough:float, Metal:float, Grain:float, Emissive:color, Strength:float, A:boo_motion):M_BB_Mount =
-        M := M_BB_Mount{}
+    MountMat(Base:color, Rough:float, Metal:float, Grain:float, Emissive:color, Strength:float, A:boo_motion):BB_Materials.M_BB_Mount =
+        M := BB_Materials.M_BB_Mount{}
         set M.Color = Base
         set M.Roughness = Rough
         set M.Metallic = Metal
@@ -587,19 +587,19 @@ boo_board_device<public> := class(creative_device):
 
     HeadlineTexture():texture =
         case (Headline):
-            boo_headline.HavingFun => T_BB_Header_1
-            boo_headline.HappyHalloween => T_BB_Header_2
-            boo_headline.SupportThisMap => T_BB_Header_3
-            boo_headline.SpookyGoodTime => T_BB_Header_4
-            _ => T_BB_Header_0
+            boo_headline.HavingFun => BB_Textures.T_BB_Header_1
+            boo_headline.HappyHalloween => BB_Textures.T_BB_Header_2
+            boo_headline.SupportThisMap => BB_Textures.T_BB_Header_3
+            boo_headline.SpookyGoodTime => BB_Textures.T_BB_Header_4
+            _ => BB_Textures.T_BB_Header_0
 
     ThanksTexture():texture =
         case (ThanksMessage):
-            boo_thanks.ThankYou => T_BB_Thanks_1
-            boo_thanks.YouRock => T_BB_Thanks_2
-            boo_thanks.Spooktacular => T_BB_Thanks_3
-            boo_thanks.StaySpooky => T_BB_Thanks_4
-            _ => T_BB_Thanks_0
+            boo_thanks.ThankYou => BB_Textures.T_BB_Thanks_1
+            boo_thanks.YouRock => BB_Textures.T_BB_Thanks_2
+            boo_thanks.Spooktacular => BB_Textures.T_BB_Thanks_3
+            boo_thanks.StaySpooky => BB_Textures.T_BB_Thanks_4
+            _ => BB_Textures.T_BB_Thanks_0
 
     Palette():boo_palette =
         Base := StylePalette(Style)
